@@ -107,7 +107,7 @@ export const MonthNav = memo(function MonthNav({ year, monthRefs }: MonthNavProp
   return (
     <div className="sticky top-[52px] z-10 -mx-3 mb-4 px-3 sm:mx-0 sm:px-0 sm:top-[60px] lg:hidden">
       <div
-        className="mx-auto flex w-fit max-w-full rounded-2xl border border-[color:var(--border-strong)] p-1.5"
+        className="mx-auto flex w-fit max-w-full rounded-2xl border border-[color:var(--border-strong)] py-1.5"
         style={{
           background: 'var(--bg-elevated)',
           boxShadow: 'var(--shadow-md)',
@@ -120,6 +120,8 @@ export const MonthNav = memo(function MonthNav({ year, monthRefs }: MonthNavProp
         >
           {MONTHS_RU_SHORT.map((m, i) => {
             const isActive = i === activeMonth;
+            const isFirst = i === 0;
+            const isLast = i === MONTHS_RU_SHORT.length - 1;
             return (
               <button
                 key={m}
@@ -130,10 +132,15 @@ export const MonthNav = memo(function MonthNav({ year, monthRefs }: MonthNavProp
                 className={[
                   'relative shrink-0 rounded-xl px-3 py-1.5 text-sm font-medium',
                   'transition-all duration-200 ease-out',
+                  // Боковые отступы у скролл-контейнера убраны (py-1.5 вместо p-1.5),
+                  // чтобы чипы могли докручиваться до самого края панели.
+                  // Визуальный отступ от рамки панели дают margin у крайних чипов.
+                  isFirst && 'ml-1.5',
+                  isLast && 'mr-1.5',
                   isActive
                     ? 'text-white'
                     : 'text-[color:var(--text-secondary)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]',
-                ].join(' ')}
+                ].filter(Boolean).join(' ')}
                 style={isActive ? { boxShadow: 'var(--shadow-md)' } : undefined}
               >
                 {/* Градиент активного состояния — отдельный overlay, чтобы opacity

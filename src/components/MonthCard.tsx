@@ -63,7 +63,7 @@ export const MonthCard = memo(forwardRef<HTMLElement, MonthCardProps>(function M
                 size="sm"
               />
             ) : (
-              <div key={`${wi}-${di}`} aria-hidden className="h-9" />
+              <div key={`${wi}-${di}`} aria-hidden className="h-8 sm:h-12" />
             ),
           ),
         )}

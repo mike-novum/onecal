@@ -58,6 +58,7 @@ export const Layout = memo(function Layout() {
             aria-label="Экспорт"
             title="Экспорт"
             className="flex h-9 items-center gap-1.5 rounded-xl border border-[color:var(--border)] px-3 text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+            style={{ background: 'var(--bg-elevated)' }}
           >
             <svg
               aria-hidden
@@ -82,6 +83,7 @@ export const Layout = memo(function Layout() {
             aria-label="Импорт"
             title="Импорт"
             className="flex h-9 items-center gap-1.5 rounded-xl border border-[color:var(--border)] px-3 text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+            style={{ background: 'var(--bg-elevated)' }}
           >
             <svg
               aria-hidden
