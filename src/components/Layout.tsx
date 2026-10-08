@@ -124,7 +124,7 @@ export function Layout() {
       )}
       <div
         aria-hidden
-        className="pointer-events-none sticky top-[52px] z-20 -mt-[100px] h-[100px] sm:top-[60px]"
+        className="pointer-events-none sticky top-0 z-[5] -mt-[100px] h-[100px]"
       >
         <ScrollBackdrop />
       </div>

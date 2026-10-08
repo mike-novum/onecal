@@ -23,9 +23,9 @@ export function MonthNav({ year, activeMonth, onMonthSelect }: MonthNavProps) {
   }, [activeMonth]);
 
   return (
-    <div className="sticky top-[152px] z-10 -mx-3 mb-4 px-3 sm:mx-0 sm:px-0 sm:top-[160px] lg:hidden">
+    <div className="sticky top-[52px] z-10 -mx-3 mb-4 px-3 sm:mx-0 sm:px-0 sm:top-[60px] lg:hidden">
       <div
-        className="rounded-2xl border border-[color:var(--border-strong)] p-1.5"
+        className="mx-auto flex w-fit max-w-full rounded-2xl border border-[color:var(--border-strong)] p-1.5"
         style={{
           background: 'var(--bg-elevated)',
           boxShadow: 'var(--shadow-md)',
