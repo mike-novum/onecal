@@ -1,0 +1,142 @@
+@import 'tailwindcss';
+
+:root {
+  /* Surfaces */
+  --bg-base: #0d0c14;
+  --bg-elevated: #16151f;
+  --bg-elevated-2: #1d1c28;
+  --bg-glass: rgba(22, 21, 31, 0.72);
+  --bg-overlay: rgba(8, 7, 14, 0.78);
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.10);
+  --border-focus: rgba(255, 255, 255, 0.22);
+
+  /* Text */
+  --text-primary: #f0f1f5;
+  --text-secondary: #8b8fa3;
+  --text-muted: #5a5e72;
+  --text-inverse: #0d0c14;
+
+  /* Accent (mutated per route in theme.ts) */
+  --accent: #5b8def;
+  --accent-2: #7b6df5;
+  --accent-soft: rgba(91, 141, 239, 0.16);
+  --accent-glow: rgba(91, 141, 239, 0.28);
+  --accent-text: #ffffff;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.42);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-focus: 0 0 0 3px var(--accent-glow);
+
+  /* Type */
+  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'ss01', 'cv11';
+  letter-spacing: -0.01em;
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 600px at 0% 0%, rgba(91, 141, 239, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(196, 132, 252, 0.04), transparent 60%);
+  background-attachment: fixed;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: 8px;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+  border: 2px solid var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Reusable surfaces */
+.surface {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md), var(--shadow-inset);
+}
+
+.surface-soft {
+  background: var(--bg-elevated-2);
+  border: 1px solid var(--border);
+}
+
+.gradient-accent {
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.gradient-text {
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
