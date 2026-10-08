@@ -18,11 +18,7 @@ export const DayCell = memo(function DayCell({ dayNumber, emoji, onClick, isToda
       aria-current={isToday ? 'date' : undefined}
       className={[
         'group relative flex items-center justify-center rounded-md border text-center tabular-nums transition',
-        // Кнопки фиксированно квадратные: 32px на телефонах, 48px на остальных экранах.
-        // justify-self-center нужен, чтобы при более широких ячейках грида кнопка
-        // не растягивалась на всю ширину, а оставалась по центру.
-        'h-8 w-8 justify-self-center self-center sm:h-12 sm:w-12',
-        isSm ? 'text-[13px]' : 'text-base',
+        isSm ? 'h-9 text-[13px]' : 'aspect-square text-base',
         isToday
           ? 'border-transparent font-semibold text-white'
           : emoji
