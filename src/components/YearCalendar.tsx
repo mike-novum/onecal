@@ -26,7 +26,7 @@ export const YearCalendar = memo(function YearCalendar({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl pb-[60vh]">
+    <div className="mx-auto w-full max-w-6xl pb-8">
       <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
         <CalendarTabs />
         <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
