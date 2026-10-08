@@ -14,15 +14,27 @@ interface YearCalendarProps {
 export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearCalendarProps) {
   const [activeMonth, setActiveMonth] = useState(0);
   const monthRefs = useRef<(HTMLElement | null)[]>([]);
+  // Пока идёт программная прокрутка к чипу, observer не должен перезаписывать activeMonth —
+  // иначе во время smooth-scroll активный чип «прыгает» по соседним месяцам.
+  const programmaticScrollRef = useRef(false);
+  const lockReleaseTimeoutRef = useRef<number | null>(null);
 
   // Следим за видимым месяцем и подсвечиваем его в chip-навигации
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Берём тот, что ближе всего к верху viewport и при этом виден
+        // Не мешаем программной прокрутке: пока она идёт, чип уже подсвечен
+        // явно из scrollToMonth, а промежуточные срабатывания observer'а
+        // привели бы к «дёрганью» активного состояния.
+        if (programmaticScrollRef.current) return;
+        // Из видимых берём ту, чей top максимален — это ближайшая к началу
+        // observation-зоны карточка, та, к которой пользователь только что
+        // проскроллил. Сортировка по возрастанию выбирала бы карточку,
+        // уже уехавшую за верх экрана (top < 0), и активной становилась
+        // бы соседняя, а не целевая.
         const visible = entries
           .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          .sort((a, b) => b.boundingClientRect.top - a.boundingClientRect.top);
         if (visible[0]) {
           const m = Number((visible[0].target as HTMLElement).dataset.month);
           if (!Number.isNaN(m)) setActiveMonth(m);
@@ -37,12 +49,47 @@ export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearC
     return () => observer.disconnect();
   }, [year]);
 
+  // Чистим таймаут-фолбэк при размонтировании, чтобы не уехать писать в ref мёртвого компонента
+  useEffect(() => {
+    return () => {
+      if (lockReleaseTimeoutRef.current !== null) {
+        window.clearTimeout(lockReleaseTimeoutRef.current);
+        lockReleaseTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   function scrollToMonth(month: number) {
     setActiveMonth(month); // немедленно подсветить выбранный чип
+    programmaticScrollRef.current = true;
+
+    // Сбрасываем предыдущий фолбэк-таймаут, если пользователь быстро кликает по разным чипам
+    if (lockReleaseTimeoutRef.current !== null) {
+      window.clearTimeout(lockReleaseTimeoutRef.current);
+      lockReleaseTimeoutRef.current = null;
+    }
+
     const el = monthRefs.current[month];
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    // Снимаем замок, когда плавная прокрутка завершилась.
+    // scrollend — точный сигнал, поддерживается в Chrome 114+, Firefox 109+, Safari 17.4+.
+    // Параллельно держим таймаут-фолбэк: он же выручит в браузерах без scrollend,
+    // и подстрахует, если прокрутка была прервана пользователем до её завершения.
+    const release = () => {
+      programmaticScrollRef.current = false;
+      if (lockReleaseTimeoutRef.current !== null) {
+        window.clearTimeout(lockReleaseTimeoutRef.current);
+        lockReleaseTimeoutRef.current = null;
+      }
+    };
+
+    if ('onscrollend' in window) {
+      window.addEventListener('scrollend', release, { once: true });
+    }
+    lockReleaseTimeoutRef.current = window.setTimeout(release, 1000);
   }
 
   // Считаем «заполненность» каждого месяца для микро-визуализации ритма года (опционально — отдадим наружу или используем позже)

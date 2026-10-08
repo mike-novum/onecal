@@ -46,18 +46,26 @@ export function MonthNav({ year, activeMonth, onMonthSelect }: MonthNavProps) {
                 aria-pressed={isActive}
                 onClick={() => onMonthSelect(i)}
                 className={[
-                  'shrink-0 rounded-xl px-3 py-1.5 text-sm font-medium transition',
+                  'relative shrink-0 rounded-xl px-3 py-1.5 text-sm font-medium',
+                  'transition-all duration-200 ease-out',
                   isActive
-                    ? 'text-white shadow-md'
+                    ? 'text-white'
                     : 'text-[color:var(--text-secondary)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]',
                 ].join(' ')}
-                style={
-                  isActive
-                    ? { backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))', boxShadow: 'var(--shadow-md)' }
-                    : undefined
-                }
+                style={isActive ? { boxShadow: 'var(--shadow-md)' } : undefined}
               >
-                {m}
+                {/* Градиент активного состояния — отдельный overlay, чтобы opacity
+                    плавно анимировался. На самой кнопке background-image не
+                    интерполируется между «нет» и градиентом в большинстве браузеров. */}
+                <span
+                  aria-hidden
+                  className={[
+                    'pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-200 ease-out',
+                    isActive ? 'opacity-100' : 'opacity-0',
+                  ].join(' ')}
+                  style={{ backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
+                />
+                <span className="relative">{m}</span>
               </button>
             );
           })}
