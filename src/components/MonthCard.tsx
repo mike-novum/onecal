@@ -43,14 +43,14 @@ export const MonthCard = memo(forwardRef<HTMLElement, MonthCardProps>(function M
           )}
         </h3>
       </header>
-      <div className="mb-1.5 grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-[color:var(--text-muted)]">
+      <div className="mx-auto mb-1.5 grid w-fit grid-cols-[repeat(7,calc(var(--spacing)*9))] gap-1 text-[10px] uppercase tracking-wider text-[color:var(--text-muted)]">
         {WEEKDAYS.map((d) => (
-          <div key={d} className="text-center">
+          <div key={d} className="w-9 text-center">
             {d}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="mx-auto grid w-fit grid-cols-[repeat(7,calc(var(--spacing)*9))] gap-1">
         {grid.map((week, wi) =>
           week.map((iso, di) =>
             iso ? (

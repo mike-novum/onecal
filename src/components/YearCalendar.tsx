@@ -26,7 +26,7 @@ export const YearCalendar = memo(function YearCalendar({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl pb-8">
+    <div className="mx-auto w-full max-w-[1340px] pb-8">
       <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
         <CalendarTabs />
         <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
@@ -56,9 +56,16 @@ export const YearCalendar = memo(function YearCalendar({
 
       <MonthNav year={year} monthRefs={monthRefs} />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+      {/* На мобиле карточки прилипают к краям экрана: отрицательный марджн
+          компенсирует боковые отступы родительского <main>, чтобы ширины
+          точно хватило для фиксированной сетки 276px (7 × 36 + 6 × 4).
+          На md+ используем minmax(0, 20rem), чтобы колонки не растягивались
+          шире 320px и не оставляли лишних «кармонов» воздуха по бокам от
+          карточек внутри ячейки грида. Кастомный брейкпойнт 3xl (1400px)
+          задан в src/index.css через @theme. */}
+      <div className="-mx-4 grid justify-center grid-cols-1 gap-4 md:mx-0 md:grid-cols-[repeat(2,minmax(0,20rem))] md:gap-3 lg:grid-cols-[repeat(3,minmax(0,20rem))] lg:gap-4 xl:grid-cols-[repeat(4,minmax(0,20rem))] xl:gap-5">
         {Array.from({ length: 12 }, (_, month) => (
-          <div key={month} className="relative">
+          <div key={month} className="relative mx-auto w-full max-w-[320px]">
             <MonthCard
               ref={(el) => {
                 monthRefs.current[month] = el;

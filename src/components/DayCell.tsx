@@ -18,7 +18,7 @@ export const DayCell = memo(function DayCell({ dayNumber, emoji, onClick, isToda
       aria-current={isToday ? 'date' : undefined}
       className={[
         'group relative flex items-center justify-center rounded-md border text-center tabular-nums transition',
-        isSm ? 'h-9 text-[13px]' : 'aspect-square text-base',
+        isSm ? 'h-9 w-9 text-[13px]' : 'aspect-square text-base',
         isToday
           ? 'border-transparent font-semibold text-white'
           : emoji
