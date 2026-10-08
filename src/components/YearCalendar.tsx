@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { buildMonthGrid, monthLabel } from '../lib/dates';
+import { CalendarTabs } from './CalendarTabs';
 import { MonthCard } from './MonthCard';
 import { MonthNav } from './MonthNav';
 
@@ -54,7 +55,8 @@ export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearC
 
   return (
     <div className="mx-auto w-full max-w-6xl pb-[60vh]">
-      <div className="mb-6 flex items-center justify-center sm:mb-8">
+      <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
+        <CalendarTabs />
         <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
           <button
             type="button"
@@ -62,13 +64,12 @@ export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearC
             aria-label="Предыдущий год"
             className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--text-secondary)] transition hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
           >
-            <span aria-hidden className="text-lg leading-none">‹</span>
+            <span aria-hidden className="text-2xl leading-none">‹</span>
           </button>
-          <div className="min-w-[6rem] px-3 text-center">
-            <div className="text-[10px] uppercase tracking-wider text-[color:var(--text-muted)]">год</div>
-            <div className="text-2xl font-semibold tabular-nums text-[color:var(--text-primary)]">
+          <div className="flex h-9 min-w-[6rem] items-center justify-center px-3">
+            <span className="text-2xl font-semibold tabular-nums text-[color:var(--text-primary)]">
               {year}
-            </div>
+            </span>
           </div>
           <button
             type="button"
@@ -76,7 +77,7 @@ export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearC
             aria-label="Следующий год"
             className="flex h-9 w-9 items-center justify-center rounded-xl text-[color:var(--text-secondary)] transition hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
           >
-            <span aria-hidden className="text-lg leading-none">›</span>
+            <span aria-hidden className="text-2xl leading-none">›</span>
           </button>
         </div>
       </div>

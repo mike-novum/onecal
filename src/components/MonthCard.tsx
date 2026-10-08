@@ -22,9 +22,6 @@ export const MonthCard = forwardRef<HTMLElement, MonthCardProps>(function MonthC
   const isCurrentMonth = currentYear === year && currentMonth === month;
   const title = MONTHS_RU[month];
 
-  // Кол-во дней в этом месяце (без padding-ячеек)
-  const daysInMonth = grid.flat().filter(Boolean).length;
-
   return (
     <section
       ref={ref}
@@ -33,7 +30,7 @@ export const MonthCard = forwardRef<HTMLElement, MonthCardProps>(function MonthC
       aria-label={`${title} ${year}`}
       className="surface scroll-mt-32 rounded-2xl p-4 sm:p-5"
     >
-      <header className="mb-3 flex items-baseline justify-between gap-3">
+      <header className="mb-3 flex items-baseline gap-3">
         <h3 className="text-base font-semibold text-[color:var(--text-primary)]">
           {title}
           {isCurrentMonth && (
@@ -45,7 +42,6 @@ export const MonthCard = forwardRef<HTMLElement, MonthCardProps>(function MonthC
             </span>
           )}
         </h3>
-        <span className="text-xs tabular-nums text-[color:var(--text-muted)]">{daysInMonth} дн</span>
       </header>
       <div className="mb-1.5 grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-[color:var(--text-muted)]">
         {WEEKDAYS.map((d) => (

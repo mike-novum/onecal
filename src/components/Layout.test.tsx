@@ -13,17 +13,6 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-test('показывает три таба и выделяет активный роут', () => {
-  render(
-    <MemoryRouter initialEntries={['/alcohol']}>
-      <Layout />
-    </MemoryRouter>,
-  );
-  expect(screen.getByText('Алкоголь')).toHaveAttribute('aria-current', 'page');
-  expect(screen.getByText('Таблетки')).not.toHaveAttribute('aria-current');
-  expect(screen.getByText('Фастфуд')).toBeInTheDocument();
-});
-
 test('accentForPath определяет календарь по пути', () => {
   expect(accentForPath('/pills')).toBe('pills');
   expect(accentForPath('/fastfood')).toBe('fastfood');

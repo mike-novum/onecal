@@ -1,15 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { exportSnapshot, parseImport } from '../lib/importExport';
 import { todayISO } from '../lib/dates';
 import { useAppStore } from '../store/useAppStore';
 import { accentForPath, applyAccentToDocument } from '../theme';
-
-const TABS = [
-  { to: '/alcohol', label: 'Алкоголь' },
-  { to: '/pills', label: 'Таблетки' },
-  { to: '/fastfood', label: 'Фастфуд' },
-];
 
 export function Layout() {
   const location = useLocation();
@@ -54,54 +48,56 @@ export function Layout() {
 
   return (
     <div className="min-h-screen">
-      <header
-        className="sticky top-0 z-30 flex items-center gap-2 border-b border-[color:var(--border)] px-3 py-2 sm:gap-4 sm:px-6 sm:py-3"
-        style={{ background: 'var(--bg-glass)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
-      >
+      <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3">
         <span className="shrink-0 text-base font-bold tracking-tight gradient-text sm:text-lg">OneCal</span>
-        <nav className="flex min-w-0 items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
-          {TABS.map((tab) => (
-            <NavLink
-              key={tab.to}
-              to={tab.to}
-              className={({ isActive }) =>
-                [
-                  'rounded-lg px-2 py-1 text-xs font-medium transition sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-sm',
-                  isActive
-                    ? 'text-white'
-                    : 'text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]',
-                ].join(' ')
-              }
-              style={({ isActive }) =>
-                isActive ? { backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' } : undefined
-              }
-            >
-              {tab.label}
-            </NavLink>
-          ))}
-        </nav>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={handleExport}
             aria-label="Экспорт"
             title="Экспорт"
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-[color:var(--border)] text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)] sm:h-auto sm:w-auto sm:px-3 sm:py-1.5"
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-[color:var(--border)] px-3 text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
           >
-            <span aria-hidden>↓</span>
-            <span className="sr-only sm:hidden">Экспорт</span>
-            <span className="hidden sm:inline">Экспорт</span>
+            <svg
+              aria-hidden
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span>Экспорт</span>
           </button>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             aria-label="Импорт"
             title="Импорт"
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-[color:var(--border)] text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)] sm:h-auto sm:w-auto sm:px-3 sm:py-1.5"
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-[color:var(--border)] px-3 text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
           >
-            <span aria-hidden>↑</span>
-            <span className="sr-only sm:hidden">Импорт</span>
-            <span className="hidden sm:inline">Импорт</span>
+            <svg
+              aria-hidden
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span>Импорт</span>
           </button>
           <input
             ref={fileInputRef}

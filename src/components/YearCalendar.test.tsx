@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, expect, test, vi } from 'vitest';
 import { useAppStore } from '../store/useAppStore';
 import { YearCalendar } from './YearCalendar';
@@ -15,7 +16,11 @@ function renderCalendar(overrides: Partial<Parameters<typeof YearCalendar>[0]> =
     onDayClick: vi.fn(),
     ...overrides,
   };
-  render(<YearCalendar {...props} />);
+  render(
+    <MemoryRouter>
+      <YearCalendar {...props} />
+    </MemoryRouter>,
+  );
   return props;
 }
 
