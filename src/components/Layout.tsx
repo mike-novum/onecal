@@ -50,7 +50,6 @@ export function Layout() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3">
-        <ScrollBackdrop />
         <span className="shrink-0 text-base font-bold tracking-tight gradient-text sm:text-lg">OneCal</span>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <button
@@ -123,6 +122,12 @@ export function Layout() {
           {message}
         </div>
       )}
+      <div
+        aria-hidden
+        className="pointer-events-none sticky top-[52px] z-20 -mt-[100px] h-[100px] sm:top-[60px]"
+      >
+        <ScrollBackdrop />
+      </div>
       <main className="px-4 py-6 sm:px-6 sm:py-8">
         <Outlet />
       </main>
