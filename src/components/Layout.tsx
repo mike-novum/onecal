@@ -4,6 +4,7 @@ import { exportSnapshot, parseImport } from '../lib/importExport';
 import { todayISO } from '../lib/dates';
 import { useAppStore } from '../store/useAppStore';
 import { accentForPath, applyAccentToDocument } from '../theme';
+import { ScrollBackdrop } from './ScrollBackdrop';
 
 export function Layout() {
   const location = useLocation();
@@ -49,6 +50,7 @@ export function Layout() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3">
+        <ScrollBackdrop />
         <span className="shrink-0 text-base font-bold tracking-tight gradient-text sm:text-lg">OneCal</span>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <button
