@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { buildMonthGrid, monthLabel } from '../lib/dates';
+import { memo, useRef } from 'react';
+import { buildMonthGrid } from '../lib/dates';
 import { CalendarTabs } from './CalendarTabs';
 import { MonthCard } from './MonthCard';
 import { MonthNav } from './MonthNav';
@@ -11,90 +11,15 @@ interface YearCalendarProps {
   onDayClick: (iso: string) => void;
 }
 
-export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearCalendarProps) {
-  const [activeMonth, setActiveMonth] = useState(0);
+export const YearCalendar = memo(function YearCalendar({
+  year,
+  onYearChange,
+  getEmoji,
+  onDayClick,
+}: YearCalendarProps) {
   const monthRefs = useRef<(HTMLElement | null)[]>([]);
-  // Пока идёт программная прокрутка к чипу, observer не должен перезаписывать activeMonth —
-  // иначе во время smooth-scroll активный чип «прыгает» по соседним месяцам.
-  const programmaticScrollRef = useRef(false);
-  const lockReleaseTimeoutRef = useRef<number | null>(null);
 
-  // Следим за видимым месяцем и подсвечиваем его в chip-навигации
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Не мешаем программной прокрутке: пока она идёт, чип уже подсвечен
-        // явно из scrollToMonth, а промежуточные срабатывания observer'а
-        // привели бы к «дёрганью» активного состояния.
-        if (programmaticScrollRef.current) return;
-        // Из видимых берём ту, чей top максимален — это ближайшая к началу
-        // observation-зоны карточка, та, к которой пользователь только что
-        // проскроллил. Сортировка по возрастанию выбирала бы карточку,
-        // уже уехавшую за верх экрана (top < 0), и активной становилась
-        // бы соседняя, а не целевая.
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.boundingClientRect.top - a.boundingClientRect.top);
-        if (visible[0]) {
-          const m = Number((visible[0].target as HTMLElement).dataset.month);
-          if (!Number.isNaN(m)) setActiveMonth(m);
-        }
-      },
-      {
-        rootMargin: '-100px 0px -60% 0px',
-        threshold: 0,
-      },
-    );
-    monthRefs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
-  }, [year]);
-
-  // Чистим таймаут-фолбэк при размонтировании, чтобы не уехать писать в ref мёртвого компонента
-  useEffect(() => {
-    return () => {
-      if (lockReleaseTimeoutRef.current !== null) {
-        window.clearTimeout(lockReleaseTimeoutRef.current);
-        lockReleaseTimeoutRef.current = null;
-      }
-    };
-  }, []);
-
-  function scrollToMonth(month: number) {
-    setActiveMonth(month); // немедленно подсветить выбранный чип
-    programmaticScrollRef.current = true;
-
-    // Сбрасываем предыдущий фолбэк-таймаут, если пользователь быстро кликает по разным чипам
-    if (lockReleaseTimeoutRef.current !== null) {
-      window.clearTimeout(lockReleaseTimeoutRef.current);
-      lockReleaseTimeoutRef.current = null;
-    }
-
-    const el = monthRefs.current[month];
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // Снимаем замок, когда плавная прокрутка завершилась.
-    // scrollend — точный сигнал, поддерживается в Chrome 114+, Firefox 109+, Safari 17.4+.
-    // Параллельно держим таймаут-фолбэк: он же выручит в браузерах без scrollend,
-    // и подстрахует, если прокрутка была прервана пользователем до её завершения.
-    const release = () => {
-      programmaticScrollRef.current = false;
-      if (lockReleaseTimeoutRef.current !== null) {
-        window.clearTimeout(lockReleaseTimeoutRef.current);
-        lockReleaseTimeoutRef.current = null;
-      }
-    };
-
-    if ('onscrollend' in window) {
-      window.addEventListener('scrollend', release, { once: true });
-    }
-    lockReleaseTimeoutRef.current = window.setTimeout(release, 1000);
-  }
-
-  // Считаем «заполненность» каждого месяца для микро-визуализации ритма года (опционально — отдадим наружу или используем позже)
-  // Здесь оставим простой вариант: только счётчик событий показываем в карточке.
-  // Подсчёт делаем через тот же getEmoji.
+  // Считаем «заполненность» каждого месяца для микро-визуализации ритма года
   function countForMonth(m: number): number {
     const grid = buildMonthGrid(year, m);
     return grid.flat().filter((iso) => iso && getEmoji(iso) !== null).length;
@@ -129,7 +54,7 @@ export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearC
         </div>
       </div>
 
-      <MonthNav year={year} activeMonth={activeMonth} onMonthSelect={scrollToMonth} />
+      <MonthNav year={year} monthRefs={monthRefs} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 12 }, (_, month) => (
@@ -153,10 +78,6 @@ export function YearCalendar({ year, onYearChange, getEmoji, onDayClick }: YearC
           </div>
         ))}
       </div>
-
-      <div className="sr-only" aria-live="polite">
-        {`Показан ${monthLabel(year, activeMonth)}`}
-      </div>
     </div>
   );
-}
+});

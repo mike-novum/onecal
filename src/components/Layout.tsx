@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { exportSnapshot, parseImport } from '../lib/importExport';
 import { todayISO } from '../lib/dates';
@@ -6,7 +6,7 @@ import { useAppStore } from '../store/useAppStore';
 import { accentForPath, applyAccentToDocument } from '../theme';
 import { ScrollBackdrop } from './ScrollBackdrop';
 
-export function Layout() {
+export const Layout = memo(function Layout() {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -133,4 +133,4 @@ export function Layout() {
       </main>
     </div>
   );
-}
+});

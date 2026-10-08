@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import { buildMonthGrid, MONTHS_RU, todayISO } from '../lib/dates';
 import { DayCell } from './DayCell';
 
@@ -11,7 +11,7 @@ interface MonthCardProps {
 
 const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
-export const MonthCard = forwardRef<HTMLElement, MonthCardProps>(function MonthCard(
+export const MonthCard = memo(forwardRef<HTMLElement, MonthCardProps>(function MonthCard(
   { year, month, getEmoji, onDayClick },
   ref,
 ) {
@@ -70,4 +70,4 @@ export const MonthCard = forwardRef<HTMLElement, MonthCardProps>(function MonthC
       </div>
     </section>
   );
-});
+}));

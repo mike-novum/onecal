@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useScrollOpacity } from '../lib/useScrollOpacity';
 
 interface ScrollBackdropProps {
@@ -14,7 +15,7 @@ interface ScrollBackdropProps {
  * чтобы «притенять» контент, который прокручивается под шапкой или
  * переключателем месяца. Не блокирует клики и невидима для скринридеров.
  */
-export function ScrollBackdrop({ maxScroll = 60 }: ScrollBackdropProps) {
+export const ScrollBackdrop = memo(function ScrollBackdrop({ maxScroll = 60 }: ScrollBackdropProps) {
   const opacity = useScrollOpacity(maxScroll);
 
   return (
@@ -28,4 +29,4 @@ export function ScrollBackdrop({ maxScroll = 60 }: ScrollBackdropProps) {
       }}
     />
   );
-}
+});

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const TABS = [
@@ -6,7 +7,7 @@ const TABS = [
   { to: '/fastfood', label: 'Фастфуд' },
 ];
 
-export function CalendarTabs() {
+export const CalendarTabs = memo(function CalendarTabs() {
   return (
     <nav
       className="flex min-w-0 items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface"
@@ -35,4 +36,4 @@ export function CalendarTabs() {
       ))}
     </nav>
   );
-}
+});

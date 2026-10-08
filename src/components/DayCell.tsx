@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface DayCellProps {
   dayNumber: number;
   emoji: string | null;
@@ -6,7 +8,7 @@ interface DayCellProps {
   size?: 'sm' | 'md';
 }
 
-export function DayCell({ dayNumber, emoji, onClick, isToday, size = 'md' }: DayCellProps) {
+export const DayCell = memo(function DayCell({ dayNumber, emoji, onClick, isToday, size = 'md' }: DayCellProps) {
   const isSm = size === 'sm';
   return (
     <button
@@ -32,4 +34,4 @@ export function DayCell({ dayNumber, emoji, onClick, isToday, size = 'md' }: Day
       )}
     </button>
   );
-}
+});
