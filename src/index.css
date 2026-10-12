@@ -9,8 +9,6 @@
 }
 
 :root {
-  color-scheme: dark;
-
   /* Surfaces */
   --bg-base: #0d0c14;
   --bg-elevated: #16151f;
@@ -59,20 +57,11 @@ body {
   letter-spacing: -0.01em;
 }
 
-html {
-  /* Фон html виден в области чёлки/Dynamic Island на iOS,
-     когда у viewport стоит viewport-fit=cover. */
-  background: var(--bg-base);
-}
-
 body {
   background-image:
     radial-gradient(1200px 600px at 0% 0%, rgba(91, 141, 239, 0.06), transparent 60%),
     radial-gradient(900px 500px at 100% 0%, rgba(196, 132, 252, 0.04), transparent 60%);
   background-attachment: fixed;
-  /* Отключаем «резиновую» прокрутку, чтобы Safari не показывал
-     белую полосу в зоне, куда уходит контент за пределы страницы. */
-  overscroll-behavior-y: none;
 }
 
 html {

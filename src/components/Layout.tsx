@@ -49,7 +49,7 @@ export const Layout = memo(function Layout() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 flex items-center gap-2 bg-[var(--bg-base)] px-3 pb-2 pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:gap-4 sm:px-6 sm:pb-3 sm:pt-[calc(env(safe-area-inset-top)+0.75rem)]">
+      <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3">
         <span className="shrink-0 text-base font-bold tracking-tight gradient-text sm:text-lg">OneCal</span>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <button
