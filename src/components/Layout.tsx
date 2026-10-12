@@ -4,12 +4,16 @@ import { exportSnapshot, parseImport } from '../lib/importExport';
 import { todayISO } from '../lib/dates';
 import { useAppStore } from '../store/useAppStore';
 import { accentForPath, applyAccentToDocument } from '../theme';
+import { useFixedTopGap } from '../lib/useFixedTopGap';
 import { ScrollBackdrop } from './ScrollBackdrop';
+
+const HEADER_BACKDROP_HEIGHT = 100;
 
 export const Layout = memo(function Layout() {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const fixedTopGap = useFixedTopGap();
 
   const alcohol = useAppStore((s) => s.alcohol);
   const fastfood = useAppStore((s) => s.fastfood);
@@ -126,7 +130,8 @@ export const Layout = memo(function Layout() {
       )}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-[calc(100dvh-100vh)] z-[5] h-[calc(100px+100vh-100dvh)]"
+        className="pointer-events-none fixed inset-x-0 z-[5]"
+        style={{ top: -fixedTopGap, height: HEADER_BACKDROP_HEIGHT + fixedTopGap }}
       >
         <ScrollBackdrop />
       </div>
