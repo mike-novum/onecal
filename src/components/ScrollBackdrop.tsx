@@ -25,7 +25,8 @@ export const ScrollBackdrop = memo(function ScrollBackdrop({ maxScroll = 60 }: S
       className="pointer-events-none absolute inset-0 -z-10 transition-opacity duration-200 ease-out"
       style={{
         opacity,
-        background: 'linear-gradient(to bottom, var(--bg-base), transparent)',
+        background:
+          'linear-gradient(to bottom, var(--bg-base) var(--backdrop-solid, 0px), transparent)',
       }}
     />
   );
