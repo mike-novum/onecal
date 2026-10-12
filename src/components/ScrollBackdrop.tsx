@@ -7,6 +7,7 @@ interface ScrollBackdropProps {
    * По умолчанию 60 — хватает, чтобы фон проявился за пару строк контента.
    */
   maxScroll?: number;
+  opacity?: number;
 }
 
 /**
@@ -15,8 +16,12 @@ interface ScrollBackdropProps {
  * чтобы «притенять» контент, который прокручивается под шапкой или
  * переключателем месяца. Не блокирует клики и невидима для скринридеров.
  */
-export const ScrollBackdrop = memo(function ScrollBackdrop({ maxScroll = 60 }: ScrollBackdropProps) {
-  const opacity = useScrollOpacity(maxScroll);
+export const ScrollBackdrop = memo(function ScrollBackdrop({
+  maxScroll = 60,
+  opacity: opacityOverride,
+}: ScrollBackdropProps) {
+  const scrolled = useScrollOpacity(maxScroll);
+  const opacity = opacityOverride ?? scrolled;
 
   return (
     <div
