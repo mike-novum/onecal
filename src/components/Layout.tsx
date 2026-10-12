@@ -126,7 +126,7 @@ export const Layout = memo(function Layout() {
       )}
       <div
         aria-hidden
-        className="pointer-events-none sticky top-0 z-[5] -mt-[100px] h-[100px]"
+        className="pointer-events-none fixed inset-x-0 top-[calc(100dvh-100vh)] z-[5] h-[calc(100px+100vh-100dvh)]"
       >
         <ScrollBackdrop />
       </div>
