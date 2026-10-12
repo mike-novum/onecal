@@ -1,4 +1,4 @@
-name: Деплой в GitHub Pages
+name: Релиз и деплой
 
 on:
   push:
@@ -6,7 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
+  pull-requests: write
   pages: write
   id-token: write
 
@@ -20,6 +22,8 @@ jobs:
     steps:
       - name: Оформить код
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Установить Node.js
         uses: actions/setup-node@v4
@@ -29,6 +33,11 @@ jobs:
 
       - name: Установить зависимости
         run: npm ci
+
+      - name: Выпустить версию
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run release
 
       - name: Собрать сайт
         run: npm run build -- --base=/onecal/
