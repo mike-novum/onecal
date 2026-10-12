@@ -4,7 +4,11 @@ import { exportSnapshot, parseImport } from '../lib/importExport';
 import { todayISO } from '../lib/dates';
 import { useAppStore } from '../store/useAppStore';
 import { accentForPath, applyAccentToDocument } from '../theme';
+import { useScrollOpacity } from '../lib/useScrollOpacity';
 import { ScrollBackdrop } from './ScrollBackdrop';
+
+const BACKDROP_BLEED_PX = 140;
+const BACKDROP_FADE_PX = 100;
 
 export const Layout = memo(function Layout() {
   const location = useLocation();
@@ -15,6 +19,8 @@ export const Layout = memo(function Layout() {
   const fastfood = useAppStore((s) => s.fastfood);
   const pillCourses = useAppStore((s) => s.pillCourses);
   const importData = useAppStore((s) => s.importData);
+  const scrollOpacity = useScrollOpacity();
+  const backdropOpacity = Math.min(scrollOpacity, 0.99);
 
   useEffect(() => {
     applyAccentToDocument(accentForPath(location.pathname));
@@ -127,10 +133,21 @@ export const Layout = memo(function Layout() {
           {message}
         </div>
       )}
-      <div aria-hidden className="pointer-events-none fixed inset-x-0 -top-16 z-[5] h-[164px]">
-        <div className="absolute inset-x-0 top-0 h-16" style={{ background: 'var(--bg-base)' }} />
-        <div className="absolute inset-x-0 bottom-0 h-[100px]">
-          <ScrollBackdrop />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 z-[5] transition-opacity duration-200 ease-out"
+        style={{
+          top: -BACKDROP_BLEED_PX,
+          height: BACKDROP_BLEED_PX + BACKDROP_FADE_PX,
+          opacity: backdropOpacity,
+        }}
+      >
+        <div
+          className="absolute inset-x-0 top-0"
+          style={{ height: BACKDROP_BLEED_PX, background: 'var(--bg-base)' }}
+        />
+        <div className="absolute inset-x-0 bottom-0" style={{ height: BACKDROP_FADE_PX }}>
+          <ScrollBackdrop opacity={1} />
         </div>
       </div>
       <main className="px-4 py-6 sm:px-6 sm:py-8">
