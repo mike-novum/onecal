@@ -9,11 +9,25 @@ const { version } = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 ) as { version: string }
 
+function deferStylesheets() {
+  return {
+    name: 'defer-stylesheets',
+    apply: 'build' as const,
+    transformIndexHtml(html: string) {
+      return html.replaceAll(
+        /<link rel="stylesheet" crossorigin href="([^"]+)">/g,
+        '<link rel="stylesheet" crossorigin href="$1" media="print" onload="this.media=\'all\'">',
+      )
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    deferStylesheets(),
     VitePWA({
       registerType: 'autoUpdate',
       manifestFilename: 'manifest.json',
