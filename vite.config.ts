@@ -50,6 +50,7 @@ export default defineConfig({
       workbox: {
         navigateFallback: 'index.html',
         globPatterns: ['**/*.{js,css,html,svg,png,ico,json}'],
+        globIgnores: ['**/node_modules/**/*', '**/apple-splash-*.png'],
       },
     }),
   ],
