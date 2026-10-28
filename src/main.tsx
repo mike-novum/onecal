@@ -10,19 +10,7 @@ registerSW({ immediate: true });
 const rootElement = document.getElementById('root')!;
 
 function dismissSplash() {
-  const splash = document.getElementById('splash');
-  if (!splash) return;
-  if (
-    getComputedStyle(splash).display === 'none' ||
-    matchMedia('(prefers-reduced-motion: reduce)').matches
-  ) {
-    splash.remove();
-    return;
-  }
-  splash.setAttribute('data-hide', '');
-  const remove = () => splash.remove();
-  splash.addEventListener('transitionend', remove, { once: true });
-  window.setTimeout(remove, 400);
+  document.getElementById('splash')?.remove();
 }
 
 createRoot(rootElement).render(
@@ -32,16 +20,10 @@ createRoot(rootElement).render(
 );
 
 const splash = document.getElementById('splash');
-if (splash) {
-  const observer = new MutationObserver(() => {
-    if (rootElement.childElementCount === 0) return;
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        if (rootElement.childElementCount === 0) return;
-        observer.disconnect();
-        dismissSplash();
-      }),
-    );
-  });
-  observer.observe(rootElement, { childList: true });
+if (splash && getComputedStyle(splash).display === 'none') {
+  dismissSplash();
+} else if (splash && document.readyState === 'complete') {
+  requestAnimationFrame(dismissSplash);
+} else if (splash) {
+  window.addEventListener('load', () => requestAnimationFrame(dismissSplash), { once: true });
 }
