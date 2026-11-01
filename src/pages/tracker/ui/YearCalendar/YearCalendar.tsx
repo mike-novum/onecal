@@ -18,7 +18,6 @@ export const YearCalendar = memo(function YearCalendar({
 }: YearCalendarProps) {
   const monthRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Считаем «заполненность» каждого месяца для микро-визуализации ритма года
   function countForMonth(m: number): number {
     const grid = buildMonthGrid(year, m);
     return grid.flat().filter((iso) => iso && getEmoji(iso) !== null).length;
@@ -78,13 +77,6 @@ export const YearCalendar = memo(function YearCalendar({
 
       <MonthNav year={year} monthRefs={monthRefs} />
 
-      {/* На мобиле карточки прилипают к краям экрана: отрицательный марджн
-          компенсирует боковые отступы родительского <main>, чтобы ширины
-          точно хватило для фиксированной сетки 276px (7 × 36 + 6 × 4).
-          На md+ используем minmax(0, 20rem), чтобы колонки не растягивались
-          шире 320px и не оставляли лишних «кармонов» воздуха по бокам от
-          карточек внутри ячейки грида. Кастомный брейкпойнт 3xl (1400px)
-          задан в src/index.css через @theme. */}
       <div className="-mx-4 grid justify-center grid-cols-1 gap-4 md:mx-0 md:grid-cols-[repeat(2,minmax(0,20rem))] md:gap-3 lg:grid-cols-[repeat(3,minmax(0,20rem))] lg:gap-4 xl:grid-cols-[repeat(4,minmax(0,20rem))] xl:gap-5">
         {Array.from({ length: 12 }, (_, month) => (
           <div key={month} className="relative mx-auto w-full max-w-[320px]">
