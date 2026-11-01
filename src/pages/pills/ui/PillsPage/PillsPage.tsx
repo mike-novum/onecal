@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CalendarTabs } from '@/shared/ui';
 import { GanttChart } from '../GanttChart';
 import { CourseCard } from '../CourseCard';
 import { CourseForm } from '../CourseForm';
@@ -27,9 +26,6 @@ export function PillsPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <div className="mb-6 flex justify-center">
-        <CalendarTabs />
-      </div>
       <div className="mb-6 flex items-center justify-between gap-3">
         <div
           role="tablist"

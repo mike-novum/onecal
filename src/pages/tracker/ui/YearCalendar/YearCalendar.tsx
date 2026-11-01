@@ -1,6 +1,5 @@
 import { memo, useRef } from 'react';
 import { buildMonthGrid } from '@/shared/lib';
-import { CalendarTabs } from '@/shared/ui';
 import { MonthCard } from '../MonthCard';
 import { MonthNav } from '../MonthNav';
 
@@ -28,7 +27,6 @@ export const YearCalendar = memo(function YearCalendar({
   return (
     <div className="mx-auto w-full max-w-[1340px] pb-8">
       <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
-        <CalendarTabs />
         <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
           <button
             type="button"
