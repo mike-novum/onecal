@@ -76,13 +76,13 @@ export const Layout = memo(function Layout() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <div className="hidden md:block sticky top-0 h-screen">
+      <div className="hidden lg:block sticky top-0 h-screen">
         <Sidebar onExport={handleExport} onImport={handleImportClick} />
       </div>
 
       <div
         aria-hidden="true"
-        className={`fixed inset-0 z-40 transition-opacity duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-0 z-40 transition-opacity duration-300 ease-in-out lg:hidden ${
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         style={{ background: 'var(--bg-overlay)' }}
@@ -92,7 +92,7 @@ export const Layout = memo(function Layout() {
       <div
         aria-hidden={!mobileMenuOpen}
         inert={!mobileMenuOpen}
-        className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
@@ -113,7 +113,7 @@ export const Layout = memo(function Layout() {
       </div>
 
       <div className="flex flex-1 flex-col overflow-y-auto">
-        <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3 md:hidden">
+        <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3 lg:hidden">
           <button
             type="button"
             aria-label="Открыть меню"

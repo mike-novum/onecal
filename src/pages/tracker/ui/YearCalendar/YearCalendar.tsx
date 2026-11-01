@@ -77,7 +77,7 @@ export const YearCalendar = memo(function YearCalendar({
 
       <MonthNav year={year} monthRefs={monthRefs} />
 
-      <div className="-mx-4 grid justify-center grid-cols-1 gap-4 md:mx-0 md:grid-cols-[repeat(2,minmax(0,20rem))] md:gap-3 lg:grid-cols-[repeat(3,minmax(0,20rem))] lg:gap-4 xl:grid-cols-[repeat(4,minmax(0,20rem))] xl:gap-5">
+      <div className="-mx-4 grid justify-center grid-cols-1 gap-4 md:mx-0 md:grid-cols-[repeat(2,minmax(0,20rem))] md:gap-3 xl:grid-cols-[repeat(3,minmax(0,20rem))] xl:gap-4 2xl:grid-cols-[repeat(4,minmax(0,20rem))] 2xl:gap-5">
         {Array.from({ length: 12 }, (_, month) => (
           <div key={month} className="relative mx-auto w-full max-w-[320px]">
             <MonthCard
