@@ -14,6 +14,7 @@ const validSnapshot: AppSnapshot = {
       medications: [{ name: 'Амоксициллин', dosage: '500 мг', timesPerDay: 3, intake: 'after' }],
     },
   ],
+  mood: {},
 };
 
 test('валидный снапшот проходит roundtrip', () => {

@@ -65,6 +65,7 @@ test('importData заменяет весь снапшот', () => {
     alcohol: { '2026-10-01': { items: ['wine'], wasBad: true } },
     fastfood: {},
     pillCourses: [],
+    mood: {},
   });
   const s = useAppStore.getState();
   expect(s.pillCourses).toEqual([]);

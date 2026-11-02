@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './ui/App';
 import { PillsPage } from '@/pages/pills';
 import { AlcoholPage, FastfoodPage } from '@/pages/tracker';
+import { MoodPage } from '@/pages/mood';
 
 export const router = createBrowserRouter(
   [
@@ -13,6 +14,7 @@ export const router = createBrowserRouter(
         { path: 'alcohol', element: <AlcoholPage /> },
         { path: 'pills', element: <PillsPage /> },
         { path: 'fastfood', element: <FastfoodPage /> },
+        { path: 'mood', element: <MoodPage /> },
       ],
     },
   ],
