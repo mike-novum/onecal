@@ -6,6 +6,7 @@ import { useAppStore } from '@/shared/model';
 import { accentForPath, applyAccentToDocument } from '../../lib/theme';
 import { useScrollOpacity } from '../../lib/useScrollOpacity';
 import { ScrollBackdrop } from '../ScrollBackdrop';
+import { Sidebar } from '@/shared/ui/Sidebar';
 
 const BACKDROP_BLEED_PX = 140;
 const BACKDROP_FADE_PX = 100;
@@ -14,6 +15,7 @@ export const Layout = memo(function Layout() {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const alcohol = useAppStore((s) => s.alcohol);
   const fastfood = useAppStore((s) => s.fastfood);
@@ -25,6 +27,17 @@ export const Layout = memo(function Layout() {
   useEffect(() => {
     applyAccentToDocument(accentForPath(location.pathname));
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
 
   function handleExport() {
     const blob = new Blob([exportSnapshot({ alcohol, fastfood, pillCourses })], {
@@ -53,26 +66,66 @@ export const Layout = memo(function Layout() {
     setMessage('Данные импортированы');
   }
 
+  function handleImportClick() {
+    fileInputRef.current?.click();
+  }
+
+  function closeMobileMenu() {
+    setMobileMenuOpen(false);
+  }
+
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3">
-        <div className="flex shrink-0 items-baseline gap-1.5">
-          <span className="text-base font-bold tracking-tight gradient-text sm:text-lg">OneCal</span>
-          <span className="text-xs text-[color:var(--text-muted)]">v{__APP_VERSION__}</span>
-        </div>
-        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+    <div className="flex h-screen overflow-hidden">
+      <div className="hidden lg:block sticky top-0 h-screen">
+        <Sidebar onExport={handleExport} onImport={handleImportClick} />
+      </div>
+
+      <div
+        aria-hidden="true"
+        className={`fixed inset-0 z-40 transition-opacity duration-300 ease-in-out lg:hidden ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ background: 'var(--bg-overlay)' }}
+        onClick={closeMobileMenu}
+      />
+
+      <div
+        aria-hidden={!mobileMenuOpen}
+        inert={!mobileMenuOpen}
+        className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out lg:hidden ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{
+          boxShadow: mobileMenuOpen ? 'var(--shadow-lg)' : 'none',
+        }}
+      >
+        <Sidebar
+          onExport={() => {
+            handleExport();
+            closeMobileMenu();
+          }}
+          onImport={() => {
+            handleImportClick();
+            closeMobileMenu();
+          }}
+          onNavClick={closeMobileMenu}
+        />
+      </div>
+
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <header className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3 lg:hidden">
           <button
             type="button"
-            onClick={handleExport}
-            aria-label="Экспорт"
-            title="Экспорт"
-            className="flex h-9 items-center gap-1.5 rounded-xl border border-[color:var(--border)] px-3 text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+            aria-label="Открыть меню"
+            aria-expanded={mobileMenuOpen}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--border)] text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
             style={{ background: 'var(--bg-elevated)' }}
+            onClick={() => setMobileMenuOpen((open) => !open)}
           >
             <svg
               aria-hidden
-              width="16"
-              height="16"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -80,37 +133,17 @@ export const Layout = memo(function Layout() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
-            <span>Экспорт</span>
           </button>
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Импорт"
-            title="Импорт"
-            className="flex h-9 items-center gap-1.5 rounded-xl border border-[color:var(--border)] px-3 text-sm text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-            style={{ background: 'var(--bg-elevated)' }}
-          >
-            <svg
-              aria-hidden
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <span>Импорт</span>
-          </button>
+
+          <div className="flex shrink-0 items-baseline gap-1.5">
+            <span className="text-base font-bold tracking-tight gradient-text">OneCal</span>
+            <span className="text-xs text-[color:var(--text-muted)]">v{__APP_VERSION__}</span>
+          </div>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -123,36 +156,39 @@ export const Layout = memo(function Layout() {
               e.target.value = '';
             }}
           />
-        </div>
-      </header>
-      {message && (
+        </header>
+
+        {message && (
+          <div
+            role="status"
+            className="border-b border-[color:var(--border)] px-4 py-2 text-sm text-[color:var(--text-secondary)] sm:px-6"
+          >
+            {message}
+          </div>
+        )}
+
         <div
-          role="status"
-          className="border-b border-[color:var(--border)] px-4 py-2 text-sm text-[color:var(--text-secondary)] sm:px-6"
+          aria-hidden
+          className="pointer-events-none fixed inset-x-0 z-[5] transition-opacity duration-200 ease-out"
+          style={{
+            top: -BACKDROP_BLEED_PX,
+            height: BACKDROP_BLEED_PX + BACKDROP_FADE_PX,
+            opacity: backdropOpacity,
+          }}
         >
-          {message}
+          <div
+            className="absolute inset-x-0 top-0"
+            style={{ height: BACKDROP_BLEED_PX, background: 'var(--bg-base)' }}
+          />
+          <div className="absolute inset-x-0 bottom-0" style={{ height: BACKDROP_FADE_PX }}>
+            <ScrollBackdrop opacity={1} />
+          </div>
         </div>
-      )}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 z-[5] transition-opacity duration-200 ease-out"
-        style={{
-          top: -BACKDROP_BLEED_PX,
-          height: BACKDROP_BLEED_PX + BACKDROP_FADE_PX,
-          opacity: backdropOpacity,
-        }}
-      >
-        <div
-          className="absolute inset-x-0 top-0"
-          style={{ height: BACKDROP_BLEED_PX, background: 'var(--bg-base)' }}
-        />
-        <div className="absolute inset-x-0 bottom-0" style={{ height: BACKDROP_FADE_PX }}>
-          <ScrollBackdrop opacity={1} />
-        </div>
+
+        <main className="px-4 py-6 sm:px-6 sm:py-8">
+          <Outlet />
+        </main>
       </div>
-      <main className="px-4 py-6 sm:px-6 sm:py-8">
-        <Outlet />
-      </main>
     </div>
   );
 });
