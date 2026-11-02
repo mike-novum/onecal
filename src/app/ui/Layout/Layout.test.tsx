@@ -16,6 +16,7 @@ afterEach(() => {
 test('accentForPath определяет календарь по пути', () => {
   expect(accentForPath('/pills')).toBe('pills');
   expect(accentForPath('/fastfood')).toBe('fastfood');
+  expect(accentForPath('/mood')).toBe('mood');
   expect(accentForPath('/anything')).toBe('alcohol');
 });
 

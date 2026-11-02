@@ -55,6 +55,17 @@ function isTracker(value: unknown): boolean {
   return Object.values(value).every(isDayLog);
 }
 
+function isMoodLog(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const log = value as Record<string, unknown>;
+  return Array.isArray(log.emotions) && log.emotions.every((i) => typeof i === 'string');
+}
+
+function isMoodTracker(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  return Object.values(value).every(isMoodLog);
+}
+
 export function parseImport(json: string): ParseResult {
   let raw: unknown;
   try {
@@ -73,6 +84,8 @@ export function parseImport(json: string): ParseResult {
   if (!Array.isArray(data.pillCourses) || !data.pillCourses.every(isPillCourse)) {
     return { ok: false, error: 'Поле pillCourses невалидно' };
   }
+  const moodRaw = data.mood ?? {};
+  if (!isMoodTracker(moodRaw)) return { ok: false, error: 'Поле mood невалидно' };
 
   return {
     ok: true,
@@ -80,6 +93,7 @@ export function parseImport(json: string): ParseResult {
       alcohol: data.alcohol as AppSnapshot['alcohol'],
       fastfood: data.fastfood as AppSnapshot['fastfood'],
       pillCourses: data.pillCourses as AppSnapshot['pillCourses'],
+      mood: moodRaw as AppSnapshot['mood'],
     },
   };
 }

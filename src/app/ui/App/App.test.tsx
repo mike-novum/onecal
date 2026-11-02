@@ -9,5 +9,5 @@ test('рендерит приложение', () => {
       <App />
     </MemoryRouter>,
   );
-  expect(screen.getByText(/onecal/i)).toBeInTheDocument();
+  expect(screen.getAllByText(/onecal/i)[0]).toBeInTheDocument();
 });

@@ -19,6 +19,15 @@ test('начальный state пустой', () => {
   expect(s.alcohol).toEqual({});
   expect(s.fastfood).toEqual({});
   expect(s.pillCourses).toEqual([]);
+  expect(s.mood).toEqual({});
+});
+
+test('setMoodLog добавляет и удаляет запись настроения', () => {
+  useAppStore.getState().setMoodLog('2026-10-05', { emotions: ['joy', 'calm'] });
+  expect(useAppStore.getState().mood['2026-10-05']).toEqual({ emotions: ['joy', 'calm'] });
+
+  useAppStore.getState().setMoodLog('2026-10-05', null);
+  expect(useAppStore.getState().mood['2026-10-05']).toBeUndefined();
 });
 
 test('setDayLog добавляет и удаляет запись', () => {
@@ -65,6 +74,7 @@ test('importData заменяет весь снапшот', () => {
     alcohol: { '2026-10-01': { items: ['wine'], wasBad: true } },
     fastfood: {},
     pillCourses: [],
+    mood: {},
   });
   const s = useAppStore.getState();
   expect(s.pillCourses).toEqual([]);

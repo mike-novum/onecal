@@ -1,7 +1,7 @@
 import { memo, useRef } from 'react';
 import { buildMonthGrid } from '@/shared/lib';
+import { MonthNav } from '@/shared/ui';
 import { MonthCard } from '../MonthCard';
-import { MonthNav } from '../MonthNav';
 
 interface YearCalendarProps {
   year: number;

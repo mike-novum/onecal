@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { to: '/alcohol', icon: '🍷', label: 'Алкоголь' },
   { to: '/fastfood', icon: '🍔', label: 'Фастфуд' },
   { to: '/pills', icon: '💊', label: 'Таблетки' },
+  { to: '/mood', icon: '🌈', label: 'Настроение' },
 ];
 
 interface SidebarProps {
