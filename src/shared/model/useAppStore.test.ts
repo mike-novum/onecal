@@ -20,6 +20,18 @@ test('начальный state пустой', () => {
   expect(s.fastfood).toEqual({});
   expect(s.pillCourses).toEqual([]);
   expect(s.mood).toEqual({});
+  expect(s.intimate).toEqual({});
+});
+
+test('setIntimateLog добавляет и удаляет запись интима', () => {
+  useAppStore.getState().setIntimateLog('2026-10-05', { sex: 2, masturbation: 1 });
+  expect(useAppStore.getState().intimate['2026-10-05']).toEqual({ sex: 2, masturbation: 1 });
+
+  useAppStore.getState().setIntimateLog('2026-10-05', null);
+  expect(useAppStore.getState().intimate['2026-10-05']).toBeUndefined();
+
+  useAppStore.getState().setIntimateLog('2026-10-05', { sex: 0, masturbation: 0 });
+  expect(useAppStore.getState().intimate['2026-10-05']).toBeUndefined();
 });
 
 test('setMoodLog добавляет и удаляет запись настроения', () => {
@@ -75,6 +87,7 @@ test('importData заменяет весь снапшот', () => {
     fastfood: {},
     pillCourses: [],
     mood: {},
+    intimate: {},
   });
   const s = useAppStore.getState();
   expect(s.pillCourses).toEqual([]);

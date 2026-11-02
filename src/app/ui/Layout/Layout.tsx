@@ -21,6 +21,7 @@ export const Layout = memo(function Layout() {
   const fastfood = useAppStore((s) => s.fastfood);
   const pillCourses = useAppStore((s) => s.pillCourses);
   const mood = useAppStore((s) => s.mood);
+  const intimate = useAppStore((s) => s.intimate);
   const importData = useAppStore((s) => s.importData);
   const scrollOpacity = useScrollOpacity();
   const backdropOpacity = Math.min(scrollOpacity, 0.99);
@@ -41,7 +42,7 @@ export const Layout = memo(function Layout() {
   }, [mobileMenuOpen]);
 
   function handleExport() {
-    const blob = new Blob([exportSnapshot({ alcohol, fastfood, pillCourses, mood })], {
+    const blob = new Blob([exportSnapshot({ alcohol, fastfood, pillCourses, mood, intimate })], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);

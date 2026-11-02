@@ -66,6 +66,24 @@ function isMoodTracker(value: unknown): boolean {
   return Object.values(value).every(isMoodLog);
 }
 
+function isIntimateLog(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const log = value as Record<string, unknown>;
+  return (
+    typeof log.sex === 'number' &&
+    Number.isInteger(log.sex) &&
+    log.sex >= 0 &&
+    typeof log.masturbation === 'number' &&
+    Number.isInteger(log.masturbation) &&
+    log.masturbation >= 0
+  );
+}
+
+function isIntimateTracker(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  return Object.values(value).every(isIntimateLog);
+}
+
 export function parseImport(json: string): ParseResult {
   let raw: unknown;
   try {
@@ -86,6 +104,8 @@ export function parseImport(json: string): ParseResult {
   }
   const moodRaw = data.mood ?? {};
   if (!isMoodTracker(moodRaw)) return { ok: false, error: 'Поле mood невалидно' };
+  const intimateRaw = data.intimate ?? {};
+  if (!isIntimateTracker(intimateRaw)) return { ok: false, error: 'Поле intimate невалидно' };
 
   return {
     ok: true,
@@ -94,6 +114,7 @@ export function parseImport(json: string): ParseResult {
       fastfood: data.fastfood as AppSnapshot['fastfood'],
       pillCourses: data.pillCourses as AppSnapshot['pillCourses'],
       mood: moodRaw as AppSnapshot['mood'],
+      intimate: intimateRaw as AppSnapshot['intimate'],
     },
   };
 }

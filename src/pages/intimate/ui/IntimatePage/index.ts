@@ -1,0 +1,1 @@
+export { IntimatePage } from './IntimatePage';

@@ -6,6 +6,7 @@ const TABS = [
   { to: '/pills', label: 'Таблетки' },
   { to: '/fastfood', label: 'Фастфуд' },
   { to: '/mood', label: 'Настроение' },
+  { to: '/intimate', label: 'Интим' },
 ];
 
 export const CalendarTabs = memo(function CalendarTabs() {
