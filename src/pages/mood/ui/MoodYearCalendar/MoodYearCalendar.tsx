@@ -1,5 +1,6 @@
 import { memo, useRef } from 'react';
-import { MonthNav } from '@/pages/tracker/ui/MonthNav';
+import { buildMonthGrid } from '@/shared/lib';
+import { MonthNav } from '@/shared/ui';
 import { MoodMonthCard } from '../MoodMonthCard';
 import type { MoodLevel } from '../../lib/moodLevel';
 
@@ -17,6 +18,11 @@ export const MoodYearCalendar = memo(function MoodYearCalendar({
   onDayClick,
 }: MoodYearCalendarProps) {
   const monthRefs = useRef<(HTMLElement | null)[]>([]);
+
+  function countForMonth(m: number): number {
+    const grid = buildMonthGrid(year, m);
+    return grid.flat().filter((iso) => iso && getMoodLevel(iso) !== null).length;
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1340px] pb-8">
@@ -84,6 +90,13 @@ export const MoodYearCalendar = memo(function MoodYearCalendar({
               getMoodLevel={getMoodLevel}
               onDayClick={onDayClick}
             />
+            {countForMonth(month) > 0 && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full"
+                style={{ backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
+              />
+            )}
           </div>
         ))}
       </div>

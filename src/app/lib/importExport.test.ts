@@ -49,6 +49,27 @@ test('курс с endDate раньше startDate отклоняется', () => 
   expect(result.ok).toBe(false);
 });
 
+test('невалидное поле mood отклоняется', () => {
+  const result = parseImport(
+    JSON.stringify({
+      alcohol: {},
+      fastfood: {},
+      pillCourses: [],
+      mood: { '2026-10-05': { emotions: 'joy' } },
+    }),
+  );
+  expect(result.ok).toBe(false);
+});
+
+test('отсутствие поля mood допускается и заменяется на пустой объект', () => {
+  const withoutMood = { alcohol: {}, fastfood: {}, pillCourses: [] };
+  const result = parseImport(JSON.stringify(withoutMood));
+  expect(result.ok).toBe(true);
+  if (result.ok) {
+    expect(result.data.mood).toEqual({});
+  }
+});
+
 test('лишние поля в JSON не мешают импорту', () => {
   const withExtra = { ...validSnapshot, version: 3, junk: [1, 2] };
   const result = parseImport(JSON.stringify(withExtra));

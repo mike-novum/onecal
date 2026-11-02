@@ -1,4 +1,4 @@
-export type AccentKind = 'alcohol' | 'fastfood' | 'pills';
+export type AccentKind = 'alcohol' | 'fastfood' | 'pills' | 'mood';
 
 export interface AccentPalette {
   primary: string;
@@ -9,6 +9,7 @@ export const ACCENT_PALETTES: Record<AccentKind, AccentPalette> = {
   alcohol: { primary: '#5b8def', secondary: '#7b6df5' },
   fastfood: { primary: '#ff8a4c', secondary: '#ffb14c' },
   pills: { primary: '#f472b6', secondary: '#c084fc' },
+  mood: { primary: '#8b5cf6', secondary: '#d946ef' },
 };
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -32,5 +33,6 @@ export function applyAccentToDocument(kind: AccentKind) {
 export function accentForPath(pathname: string): AccentKind {
   if (pathname.startsWith('/fastfood')) return 'fastfood';
   if (pathname.startsWith('/pills')) return 'pills';
+  if (pathname.startsWith('/mood')) return 'mood';
   return 'alcohol';
 }

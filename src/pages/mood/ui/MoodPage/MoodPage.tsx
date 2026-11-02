@@ -6,8 +6,7 @@ import { MoodDayModal } from '../MoodDayModal';
 import { getMoodLevel } from '../../lib/moodLevel';
 
 export function MoodPage() {
-  const now = new Date();
-  const [year, setYear] = useState(now.getFullYear());
+  const [year, setYear] = useState(() => new Date().getFullYear());
   const [selected, setSelected] = useState<string | null>(null);
 
   const mood = useAppStore((s) => s.mood);

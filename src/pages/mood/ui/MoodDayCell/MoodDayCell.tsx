@@ -28,21 +28,30 @@ export const MoodDayCell = memo(function MoodDayCell({
       aria-current={isToday ? 'date' : undefined}
       className={[
         'group relative flex h-9 w-9 items-center justify-center rounded-md border text-center text-[13px] tabular-nums transition',
-        isToday
+        isToday && !hasMood
           ? 'border-transparent font-semibold text-white'
-          : hasMood
-            ? 'font-medium'
-            : 'border-[color:var(--border)] text-[color:var(--text-secondary)] hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)]',
+          : isToday && hasMood
+            ? 'font-bold ring-2 ring-[var(--accent)] ring-offset-1 ring-offset-[var(--bg-base)]'
+            : hasMood
+              ? 'font-medium'
+              : 'border-[color:var(--border)] text-[color:var(--text-secondary)] hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)]',
       ].join(' ')}
       style={
-        isToday
+        isToday && !hasMood
           ? { backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
           : hasMood
             ? { backgroundColor: bgColor, borderColor: borderColor, color: 'var(--text-primary)' }
             : undefined
       }
     >
-      <span className={isToday ? 'text-white' : ''}>{dayNumber}</span>
+      <span className={isToday && !hasMood ? 'text-white' : ''}>{dayNumber}</span>
+      {isToday && hasMood && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute bottom-0.5 h-1 w-1 rounded-full"
+          style={{ backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
+        />
+      )}
     </button>
   );
 });
