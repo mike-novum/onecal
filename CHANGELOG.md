@@ -1,3 +1,13 @@
+## [1.5.0](https://github.com/mike-novum/onecal/compare/v1.4.0...v1.5.0) (2026-11-02)
+
+### Features
+
+* добавлена вкладка календаря «Интим» для трекинга сексуальной активности ([f1b228d](https://github.com/mike-novum/onecal/commit/f1b228d3f9fb418e798c75a7e8e88ea6fcbebb98))
+
+### Bug Fixes
+
+* у кнопок поправлено отображение курсора и анимация нажатия ([ce38e7e](https://github.com/mike-novum/onecal/commit/ce38e7eff3887ec3964edf9f799731b0dd69743a))
+
 ## [1.4.0](https://github.com/mike-novum/onecal/compare/v1.3.0...v1.4.0) (2026-11-02)
 
 ### Features
