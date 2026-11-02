@@ -1,3 +1,10 @@
+## [1.4.0](https://github.com/mike-novum/onecal/compare/v1.3.0...v1.4.0) (2026-11-02)
+
+### Features
+
+* добавлен трекер настроения с выбором эмоций и цветовой подсветкой дней в календаре ([fc4876e](https://github.com/mike-novum/onecal/commit/fc4876e815007ce9caba9c0c4b7e90bbcf09bc74))
+* завершена интеграция трекера настроения с темой оформления, индикацией в календаре и тестами ([9b7a434](https://github.com/mike-novum/onecal/commit/9b7a4349123a65efad66dca797e0002c7b987c9c))
+
 ## [1.3.0](https://github.com/mike-novum/onecal/compare/v1.2.2...v1.3.0) (2026-11-02)
 
 ### Features
