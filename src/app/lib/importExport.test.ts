@@ -15,6 +15,7 @@ const validSnapshot: AppSnapshot = {
     },
   ],
   mood: {},
+  intimate: { '2026-10-05': { sex: 1, masturbation: 0 } },
 };
 
 test('валидный снапшот проходит roundtrip', () => {
@@ -67,6 +68,27 @@ test('отсутствие поля mood допускается и заменя�
   expect(result.ok).toBe(true);
   if (result.ok) {
     expect(result.data.mood).toEqual({});
+  }
+});
+
+test('невалидное поле intimate отклоняется', () => {
+  const result = parseImport(
+    JSON.stringify({
+      alcohol: {},
+      fastfood: {},
+      pillCourses: [],
+      intimate: { '2026-10-05': { sex: 'one', masturbation: 0 } },
+    }),
+  );
+  expect(result.ok).toBe(false);
+});
+
+test('отсутствие поля intimate допускается и заменяется на пустой объект', () => {
+  const withoutIntimate = { alcohol: {}, fastfood: {}, pillCourses: [] };
+  const result = parseImport(JSON.stringify(withoutIntimate));
+  expect(result.ok).toBe(true);
+  if (result.ok) {
+    expect(result.data.intimate).toEqual({});
   }
 });
 

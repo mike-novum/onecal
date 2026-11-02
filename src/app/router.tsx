@@ -3,6 +3,7 @@ import App from './ui/App';
 import { PillsPage } from '@/pages/pills';
 import { AlcoholPage, FastfoodPage } from '@/pages/tracker';
 import { MoodPage } from '@/pages/mood';
+import { IntimatePage } from '@/pages/intimate';
 
 export const router = createBrowserRouter(
   [
@@ -15,6 +16,7 @@ export const router = createBrowserRouter(
         { path: 'pills', element: <PillsPage /> },
         { path: 'fastfood', element: <FastfoodPage /> },
         { path: 'mood', element: <MoodPage /> },
+        { path: 'intimate', element: <IntimatePage /> },
       ],
     },
   ],
