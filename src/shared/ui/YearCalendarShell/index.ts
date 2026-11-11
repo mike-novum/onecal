@@ -1,0 +1,1 @@
+export { YearCalendarShell } from './YearCalendarShell';
