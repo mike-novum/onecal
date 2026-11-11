@@ -55,10 +55,22 @@ function isTracker(value: unknown): boolean {
   return Object.values(value).every(isDayLog);
 }
 
+function isStringArray(value: unknown): boolean {
+  return Array.isArray(value) && value.every((i) => typeof i === 'string');
+}
+
+function isOptionalStringArray(log: Record<string, unknown>, key: string): boolean {
+  return !(key in log) || log[key] === undefined || isStringArray(log[key]);
+}
+
 function isMoodLog(value: unknown): boolean {
   if (typeof value !== 'object' || value === null) return false;
   const log = value as Record<string, unknown>;
-  return Array.isArray(log.emotions) && log.emotions.every((i) => typeof i === 'string');
+  if (!isStringArray(log.emotions)) return false;
+  if (!isOptionalStringArray(log, 'negativeReasons')) return false;
+  if (!isOptionalStringArray(log, 'positiveReasons')) return false;
+  if ('note' in log && log.note !== undefined && typeof log.note !== 'string') return false;
+  return true;
 }
 
 function isMoodTracker(value: unknown): boolean {
