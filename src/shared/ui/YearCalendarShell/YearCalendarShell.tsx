@@ -31,7 +31,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
   const [isMobile, setIsMobile] = useState(readIsMobile);
   const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
   const [yearOpen, setYearOpen] = useState(false);
-  const [arrowsOffset, setArrowsOffset] = useState(0);
+  const [cardBox, setCardBox] = useState({ height: 0, width: 0 });
 
   useLayoutEffect(() => {
     activeMonthRef.current = activeMonth;
@@ -77,7 +77,11 @@ export const YearCalendarShell = memo(function YearCalendarShell({
     if (!isMobile) return;
     const el = scrollerRef.current;
     if (!el) return;
-    const measure = () => setArrowsOffset(el.offsetHeight / 2 + 12);
+    const measure = () => {
+      const slot = el.querySelector<HTMLElement>('[data-month]');
+      if (!slot) return;
+      setCardBox({ height: el.offsetHeight, width: slot.offsetWidth });
+    };
     measure();
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(measure);
@@ -155,18 +159,38 @@ export const YearCalendarShell = memo(function YearCalendarShell({
 
       {isMobile ? (
         <div className="pointer-events-none fixed inset-0 z-20">
-          <div className="pointer-events-auto absolute inset-x-0 top-[60px] flex justify-center sm:top-[68px]">
-            <button
-              type="button"
-              aria-haspopup="dialog"
-              aria-label={`Выбрать год, сейчас ${year}`}
-              onClick={() => setYearOpen(true)}
-              className="surface flex h-9 min-w-[6.5rem] items-center justify-center gap-1 rounded-2xl border border-[color:var(--border)] px-3 text-base font-semibold tabular-nums text-[color:var(--text-primary)]"
-            >
-              {year}
-              <Chevron direction="down" />
-            </button>
-          </div>
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            aria-label={`Выбрать год, сейчас ${year}`}
+            onClick={() => setYearOpen(true)}
+            className="surface pointer-events-auto absolute left-1/2 flex h-14 min-w-[8.5rem] items-center justify-center gap-1.5 rounded-2xl border border-[color:var(--border)] px-5 text-xl font-semibold tabular-nums text-[color:var(--text-primary)]"
+            style={{ top: '50%', transform: `translate(-50%, calc(-100% - ${cardBox.height / 2 + 10}px))` }}
+          >
+            {year}
+            <Chevron direction="down" size={20} />
+          </button>
+
+          <button
+            type="button"
+            aria-label="Предыдущий месяц"
+            disabled={activeMonth === 0}
+            onClick={() => selectMonth(activeMonth - 1)}
+            className="pointer-events-auto absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
+            style={{ left: `max(0px, calc(50% - ${cardBox.width / 2 + 48}px))` }}
+          >
+            <Chevron direction="left" size={26} />
+          </button>
+          <button
+            type="button"
+            aria-label="Следующий месяц"
+            disabled={activeMonth === 11}
+            onClick={() => selectMonth(activeMonth + 1)}
+            className="pointer-events-auto absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
+            style={{ right: `max(0px, calc(50% - ${cardBox.width / 2 + 48}px))` }}
+          >
+            <Chevron direction="right" size={26} />
+          </button>
 
           <div
             ref={scrollerRef}
@@ -184,29 +208,6 @@ export const YearCalendarShell = memo(function YearCalendarShell({
                 </MonthSlot>
               </div>
             ))}
-          </div>
-          <div
-            className="pointer-events-auto absolute inset-x-0 top-1/2 flex items-center justify-center gap-16"
-            style={{ marginTop: arrowsOffset }}
-          >
-            <button
-              type="button"
-              aria-label="Предыдущий месяц"
-              disabled={activeMonth === 0}
-              onClick={() => selectMonth(activeMonth - 1)}
-              className="flex h-11 w-11 items-center justify-center text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
-            >
-              <Chevron direction="left" size={22} />
-            </button>
-            <button
-              type="button"
-              aria-label="Следующий месяц"
-              disabled={activeMonth === 11}
-              onClick={() => selectMonth(activeMonth + 1)}
-              className="flex h-11 w-11 items-center justify-center text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
-            >
-              <Chevron direction="right" size={22} />
-            </button>
           </div>
           <p className="sr-only" aria-live="polite">
             {MONTHS_RU[activeMonth]}
@@ -251,7 +252,7 @@ function MonthSlot({
     <div
       ref={onElement}
       data-month={month}
-      className="relative mx-auto w-full max-w-[320px] scroll-mt-32"
+      className="relative mx-auto w-fit max-w-[320px] scroll-mt-32"
     >
       {children}
       {hasMark && (
