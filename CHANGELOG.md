@@ -1,3 +1,9 @@
+## [1.6.0](https://github.com/mike-novum/onecal/compare/v1.5.0...v1.6.0) (2026-11-12)
+
+### Features
+
+* добавлена возможность указывать заметки по настроению и выбирать причины негативных/положительных эмоций ([#7](https://github.com/mike-novum/onecal/issues/7)) ([c73c767](https://github.com/mike-novum/onecal/commit/c73c76762a7b210c8451c2c172ff602c4b223898))
+
 ## [1.5.0](https://github.com/mike-novum/onecal/compare/v1.4.0...v1.5.0) (2026-11-02)
 
 ### Features
