@@ -31,6 +31,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
   const [isMobile, setIsMobile] = useState(readIsMobile);
   const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
   const [yearOpen, setYearOpen] = useState(false);
+  const [arrowsOffset, setArrowsOffset] = useState(0);
 
   useLayoutEffect(() => {
     activeMonthRef.current = activeMonth;
@@ -72,6 +73,18 @@ export const YearCalendarShell = memo(function YearCalendarShell({
     scrollToMonth(activeMonthRef.current, 'auto');
   }, [isMobile, year]);
 
+  useLayoutEffect(() => {
+    if (!isMobile) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    const measure = () => setArrowsOffset(el.offsetHeight / 2 + 12);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isMobile, year, activeMonth]);
+
   useEffect(() => {
     if (!isMobile) return;
     const el = scrollerRef.current;
@@ -109,7 +122,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
   };
 
   return (
-    <div className={`mx-auto w-full max-w-[1340px] ${isMobile ? 'pb-28' : 'pb-8'}`}>
+    <div className={isMobile ? undefined : 'mx-auto w-full max-w-[1340px] pb-8'}>
       {!isMobile && (
         <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
           <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
@@ -141,22 +154,63 @@ export const YearCalendarShell = memo(function YearCalendarShell({
       {!isMobile && <MonthNav year={year} monthRefs={monthRefs} />}
 
       {isMobile ? (
-        <div
-          ref={scrollerRef}
-          onScroll={handleScroll}
-          onPointerDown={() => {
-            programmaticRef.current = false;
-          }}
-          className="scrollbar-hide -mx-4 flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
-          aria-label={`Месяцы ${year}`}
-        >
-          {Array.from({ length: 12 }, (_, month) => (
-            <div key={month} className="basis-full shrink-0 snap-center snap-always px-4 py-1">
-              <MonthSlot month={month} onElement={rememberMonth} hasMark={hasMark(month)}>
-                {renderMonth(month)}
-              </MonthSlot>
-            </div>
-          ))}
+        <div className="pointer-events-none fixed inset-0 z-20">
+          <div className="pointer-events-auto absolute inset-x-0 top-[60px] flex justify-center sm:top-[68px]">
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              aria-label={`Выбрать год, сейчас ${year}`}
+              onClick={() => setYearOpen(true)}
+              className="surface flex h-9 min-w-[6.5rem] items-center justify-center gap-1 rounded-2xl border border-[color:var(--border)] px-3 text-base font-semibold tabular-nums text-[color:var(--text-primary)]"
+            >
+              {year}
+              <Chevron direction="down" />
+            </button>
+          </div>
+
+          <div
+            ref={scrollerRef}
+            onScroll={handleScroll}
+            onPointerDown={() => {
+              programmaticRef.current = false;
+            }}
+            className="scrollbar-hide pointer-events-auto absolute inset-x-0 top-1/2 flex -translate-y-1/2 snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+            aria-label={`Месяцы ${year}`}
+          >
+            {Array.from({ length: 12 }, (_, month) => (
+              <div key={month} className="basis-full shrink-0 snap-center snap-always px-4 py-1">
+                <MonthSlot month={month} onElement={rememberMonth} hasMark={hasMark(month)}>
+                  {renderMonth(month)}
+                </MonthSlot>
+              </div>
+            ))}
+          </div>
+          <div
+            className="pointer-events-auto absolute inset-x-0 top-1/2 flex items-center justify-center gap-16"
+            style={{ marginTop: arrowsOffset }}
+          >
+            <button
+              type="button"
+              aria-label="Предыдущий месяц"
+              disabled={activeMonth === 0}
+              onClick={() => selectMonth(activeMonth - 1)}
+              className="flex h-11 w-11 items-center justify-center text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
+            >
+              <Chevron direction="left" size={22} />
+            </button>
+            <button
+              type="button"
+              aria-label="Следующий месяц"
+              disabled={activeMonth === 11}
+              onClick={() => selectMonth(activeMonth + 1)}
+              className="flex h-11 w-11 items-center justify-center text-[color:var(--text-secondary)] transition hover:text-[color:var(--text-primary)]"
+            >
+              <Chevron direction="right" size={22} />
+            </button>
+          </div>
+          <p className="sr-only" aria-live="polite">
+            {MONTHS_RU[activeMonth]}
+          </p>
         </div>
       ) : (
         <div className="-mx-4 grid justify-center grid-cols-1 gap-4 md:mx-0 md:grid-cols-[repeat(2,minmax(0,20rem))] md:gap-3 xl:grid-cols-[repeat(3,minmax(0,20rem))] xl:gap-4 2xl:grid-cols-[repeat(4,minmax(0,20rem))] 2xl:gap-5">
@@ -165,54 +219,6 @@ export const YearCalendarShell = memo(function YearCalendarShell({
               {renderMonth(month)}
             </MonthSlot>
           ))}
-        </div>
-      )}
-
-      {isMobile && (
-        <div
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-[color:var(--border)] px-4 pt-3"
-          style={{
-            background: 'var(--bg-elevated)',
-            paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
-          }}
-        >
-          <p
-            aria-live="polite"
-            className="mb-2 text-center text-sm font-medium text-[color:var(--text-secondary)]"
-          >
-            {MONTHS_RU[activeMonth]}
-          </p>
-          <div className="mx-auto flex max-w-md items-center justify-between gap-3">
-            <button
-              type="button"
-              aria-label="Предыдущий месяц"
-              disabled={activeMonth === 0}
-              onClick={() => selectMonth(activeMonth - 1)}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-[color:var(--border)] text-[color:var(--text-secondary)] transition hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-            >
-              <Chevron direction="left" />
-            </button>
-            <button
-              type="button"
-              aria-haspopup="dialog"
-              aria-label={`Выбрать год, сейчас ${year}`}
-              onClick={() => setYearOpen(true)}
-              className="flex h-11 min-w-[7.5rem] items-center justify-center gap-1.5 rounded-xl border border-[color:var(--border)] px-4 text-base font-semibold tabular-nums text-[color:var(--text-primary)]"
-              style={{ background: 'var(--bg-elevated-2)' }}
-            >
-              {year}
-              <Chevron direction="down" />
-            </button>
-            <button
-              type="button"
-              aria-label="Следующий месяц"
-              disabled={activeMonth === 11}
-              onClick={() => selectMonth(activeMonth + 1)}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-[color:var(--border)] text-[color:var(--text-secondary)] transition hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-            >
-              <Chevron direction="right" />
-            </button>
-          </div>
         </div>
       )}
 
@@ -259,14 +265,14 @@ function MonthSlot({
   );
 }
 
-function Chevron({ direction }: { direction: 'left' | 'right' | 'down' }) {
+function Chevron({ direction, size = 18 }: { direction: 'left' | 'right' | 'down'; size?: number }) {
   const points =
     direction === 'left' ? '15 18 9 12 15 6' : direction === 'right' ? '9 18 15 12 9 6' : '6 9 12 15 18 9';
   return (
     <svg
       aria-hidden
-      width="18"
-      height="18"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

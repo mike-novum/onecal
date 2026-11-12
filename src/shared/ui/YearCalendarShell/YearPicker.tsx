@@ -44,7 +44,7 @@ export function YearPicker({ year, onSelect, onClose }: YearPickerProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-5"
       onClick={onClose}
       style={{
         background: 'var(--bg-overlay)',
@@ -56,7 +56,7 @@ export function YearPicker({ year, onSelect, onClose }: YearPickerProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Выбор года"
-        className="flex max-h-[min(32rem,80vh)] w-full max-w-sm flex-col rounded-t-3xl border border-[color:var(--border)] p-5 sm:rounded-2xl"
+        className="flex max-h-[min(26rem,78vh)] w-full max-w-[18.5rem] flex-col rounded-2xl border border-[color:var(--border)] p-4"
         style={{ background: 'var(--bg-elevated)', boxShadow: 'var(--shadow-lg), var(--shadow-inset)' }}
         onClick={(e) => e.stopPropagation()}
       >
