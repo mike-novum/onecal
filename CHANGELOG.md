@@ -1,3 +1,16 @@
+## [1.7.0](https://github.com/mike-novum/onecal/compare/v1.6.0...v1.7.0) (2026-11-16)
+
+### Features
+
+* добавлен быстрый переход к сегодня, улучшена диаграмма курсов и подтверждение удаления ([425e97e](https://github.com/mike-novum/onecal/commit/425e97e6e055875c8863bde1c326d2e5744fd884))
+* добавлена нижняя панель навигации для мобильных устройств и улучшены формы ввода ([e8ac945](https://github.com/mike-novum/onecal/commit/e8ac94518bbb9fd804e986e4b95db40f33588914))
+* добавлена статистика серий над календарями, дневной чеклист таблеток и тактильный отклик ([673b309](https://github.com/mike-novum/onecal/commit/673b30937689f97588efd698af1fadb4952aa40a))
+
+### Bug Fixes
+
+* исправлено обрезание круглого бейджа заполнения месяца в мобильной карусели ([728ce00](https://github.com/mike-novum/onecal/commit/728ce00c7621ffe518105375deddf7d70299a361))
+* устранено дублирование сообщения о пустом списке курсов в режиме гантта ([050684b](https://github.com/mike-novum/onecal/commit/050684bd78cad604f9057bff50a40a5bbf179f2f))
+
 ## [1.6.0](https://github.com/mike-novum/onecal/compare/v1.5.0...v1.6.0) (2026-11-12)
 
 ### Features
