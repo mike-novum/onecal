@@ -39,7 +39,7 @@ test('клик «Новый курс» показывает форму, сабм
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });
 
-test('клик «Удалить» на карточке удаляет курс', () => {
+test('клик «Удалить» на карточке требует подтверждения и удаляет курс', () => {
   useAppStore.getState().addCourse({
     id: 'c1',
     title: 'Антибиотик',
@@ -49,5 +49,19 @@ test('клик «Удалить» на карточке удаляет курс'
   });
   renderPage();
   fireEvent.click(screen.getByRole('button', { name: 'Удалить' }));
+  expect(screen.getByText('Удалить курс?')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Отмена' }));
+  expect(useAppStore.getState().pillCourses).toHaveLength(1);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Удалить' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Да, удалить' }));
   expect(useAppStore.getState().pillCourses).toHaveLength(0);
+});
+
+test('в режиме «Гантт» при пустом списке отображается только одна заглушка', () => {
+  renderPage();
+  fireEvent.click(screen.getByRole('tab', { name: 'Гантт' }));
+  expect(screen.getByText('Нет курсов. Нажмите «Новый курс», чтобы добавить.')).toBeInTheDocument();
+  expect(screen.queryByText('Нет курсов для отображения')).not.toBeInTheDocument();
 });

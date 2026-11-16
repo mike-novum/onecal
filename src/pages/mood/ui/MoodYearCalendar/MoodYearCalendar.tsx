@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type ReactNode } from 'react';
 import { buildMonthGrid } from '@/shared/lib';
 import { YearCalendarShell } from '@/shared/ui';
 import { MoodMonthCard } from '../MoodMonthCard';
@@ -9,6 +9,7 @@ interface MoodYearCalendarProps {
   onYearChange: (year: number) => void;
   getMoodLevel: (iso: string) => MoodLevel;
   onDayClick: (iso: string) => void;
+  renderStats?: (activeMonth: number) => ReactNode;
 }
 
 export const MoodYearCalendar = memo(function MoodYearCalendar({
@@ -16,6 +17,7 @@ export const MoodYearCalendar = memo(function MoodYearCalendar({
   onYearChange,
   getMoodLevel,
   onDayClick,
+  renderStats,
 }: MoodYearCalendarProps) {
   function countForMonth(m: number): number {
     const grid = buildMonthGrid(year, m);
@@ -27,6 +29,7 @@ export const MoodYearCalendar = memo(function MoodYearCalendar({
       year={year}
       onYearChange={onYearChange}
       hasMark={(month) => countForMonth(month) > 0}
+      renderStats={renderStats}
       renderMonth={(month) => (
         <MoodMonthCard year={year} month={month} getMoodLevel={getMoodLevel} onDayClick={onDayClick} />
       )}

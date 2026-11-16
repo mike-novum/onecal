@@ -43,3 +43,43 @@ test('курс из одного дня имеет ширину не меньш�
   const bar = screen.getByText('Один день');
   expect(bar.style.gridColumnEnd).toBe('span 1');
 });
+
+test('отображает названия месяцев над шкалой дней', () => {
+  render(
+    <GanttChart
+      courses={[
+        course('c1', 'Курс 1', '2026-09-29', '2026-10-03'),
+      ]}
+    />,
+  );
+  expect(screen.getByText('Сентябрь 2026')).toBeInTheDocument();
+  expect(screen.getByText('Октябрь 2026')).toBeInTheDocument();
+});
+
+test('отображает маркер «Сегодня» когда дата попадает в шкалу', () => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${y}-${m}-${d}`;
+
+  render(
+    <GanttChart
+      courses={[
+        course('c1', 'Текущий курс', todayStr, todayStr),
+      ]}
+    />,
+  );
+  expect(screen.getByTestId('gantt-today-line')).toBeInTheDocument();
+});
+
+test('не отображает маркер «Сегодня» когда дата не попадает в шкалу', () => {
+  render(
+    <GanttChart
+      courses={[
+        course('c1', 'Прошлый курс', '2020-01-01', '2020-01-05'),
+      ]}
+    />,
+  );
+  expect(screen.queryByTestId('gantt-today-line')).not.toBeInTheDocument();
+});

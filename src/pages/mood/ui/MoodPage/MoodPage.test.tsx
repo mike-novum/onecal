@@ -42,3 +42,21 @@ test('переключатель года меняет текущий отобр
   fireEvent.click(screen.getByRole('button', { name: 'Следующий год' }));
   expect(screen.getByText('2027')).toBeInTheDocument();
 });
+
+test('отображает статистику настроения за месяц', () => {
+  useAppStore.setState({
+    mood: {
+      '2026-10-01': { emotions: ['joy'] },
+      '2026-10-02': { emotions: ['calm'] },
+    },
+  });
+  render(
+    <MemoryRouter>
+      <MoodPage />
+    </MemoryRouter>,
+  );
+  expect(screen.getByTestId('stats-widget')).toBeInTheDocument();
+  expect(screen.getByText('2 отметки')).toBeInTheDocument();
+  expect(screen.getByText('Преобладающее')).toBeInTheDocument();
+  expect(screen.getByText('Всё хорошо')).toBeInTheDocument();
+});

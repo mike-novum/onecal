@@ -7,17 +7,21 @@ import { useEffect, useState } from 'react';
  *
  * @param maxScroll расстояние в пикселях, на котором opacity доходит до 1
  */
-export function useScrollOpacity(maxScroll = 60): number {
+export function useScrollOpacity(
+  maxScroll = 60,
+  targetRef?: React.RefObject<HTMLElement | null>,
+): number {
   const [opacity, setOpacity] = useState(0);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     let frame = 0;
+    const target = targetRef?.current;
 
     function update() {
       frame = 0;
-      const y = window.scrollY;
+      const y = target ? target.scrollTop : window.scrollY;
       const next = Math.max(0, Math.min(1, y / maxScroll));
       setOpacity(next);
     }
@@ -30,13 +34,14 @@ export function useScrollOpacity(maxScroll = 60): number {
     }
 
     update();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const eventTarget = target ?? window;
+    eventTarget.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      eventTarget.removeEventListener('scroll', onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [maxScroll]);
+  }, [maxScroll, targetRef]);
 
   return opacity;
 }

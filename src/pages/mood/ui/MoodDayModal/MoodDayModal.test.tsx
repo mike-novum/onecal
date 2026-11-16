@@ -72,3 +72,27 @@ test('при открытии фокус установлен на кнопке 
   renderModal();
   expect(screen.getByRole('button', { name: 'Закрыть' })).toHaveFocus();
 });
+
+test('при выборе позитивной эмоции негативные причины скрываются под спойлер «Было что-то неприятное?»', () => {
+  renderModal({ initial: { emotions: ['joy'] } });
+  expect(screen.getByText('Причины положительных эмоций')).toBeInTheDocument();
+  expect(screen.queryByText('Причины негативных эмоций')).not.toBeInTheDocument();
+
+  const spoiler = screen.getByRole('button', { name: 'Было что-то неприятное?' });
+  expect(spoiler).toBeInTheDocument();
+
+  fireEvent.click(spoiler);
+  expect(screen.getByText('Причины негативных эмоций')).toBeInTheDocument();
+});
+
+test('при выборе негативной эмоции позитивные причины скрываются под спойлер «Было что-то приятное?»', () => {
+  renderModal({ initial: { emotions: ['anger'] } });
+  expect(screen.getByText('Причины негативных эмоций')).toBeInTheDocument();
+  expect(screen.queryByText('Причины положительных эмоций')).not.toBeInTheDocument();
+
+  const spoiler = screen.getByRole('button', { name: 'Было что-то приятное?' });
+  expect(spoiler).toBeInTheDocument();
+
+  fireEvent.click(spoiler);
+  expect(screen.getByText('Причины положительных эмоций')).toBeInTheDocument();
+});

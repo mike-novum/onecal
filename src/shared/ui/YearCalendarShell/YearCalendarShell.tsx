@@ -15,6 +15,7 @@ interface YearCalendarShellProps {
   onYearChange: (year: number) => void;
   hasMark: (month: number) => boolean;
   renderMonth: (month: number) => ReactNode;
+  renderStats?: (activeMonth: number) => ReactNode;
 }
 
 export const YearCalendarShell = memo(function YearCalendarShell({
@@ -22,16 +23,27 @@ export const YearCalendarShell = memo(function YearCalendarShell({
   onYearChange,
   hasMark,
   renderMonth,
+  renderStats,
 }: YearCalendarShellProps) {
+  const [{ year: currentYear, month: currentMonth }] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
+
   const monthRefs = useRef<(HTMLElement | null)[]>([]);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const activeMonthRef = useRef(0);
   const programmaticRef = useRef(false);
   const lockTimerRef = useRef<number | null>(null);
+  const pendingScrollRef = useRef<number | null>(null);
+  const topBarRef = useRef<HTMLDivElement>(null);
+
   const [isMobile, setIsMobile] = useState(readIsMobile);
-  const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
+  const [activeMonth, setActiveMonth] = useState(() => currentMonth);
   const [yearOpen, setYearOpen] = useState(false);
   const [cardBox, setCardBox] = useState({ height: 0, width: 0 });
+  const [isCurrentMonthVisible, setIsCurrentMonthVisible] = useState(true);
+  const [topBarVisible, setTopBarVisible] = useState(true);
 
   useLayoutEffect(() => {
     activeMonthRef.current = activeMonth;
@@ -118,6 +130,74 @@ export const YearCalendarShell = memo(function YearCalendarShell({
     scrollToMonth(next, 'smooth');
   }
 
+  useEffect(() => {
+    if (isMobile) return;
+    const targetEl = monthRefs.current[currentMonth];
+    if (!targetEl || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsCurrentMonthVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(targetEl);
+    return () => observer.disconnect();
+  }, [isMobile, year, currentMonth]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const barEl = topBarRef.current;
+    if (!barEl || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setTopBarVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(barEl);
+    return () => observer.disconnect();
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (pendingScrollRef.current !== null && year === currentYear) {
+      const target = pendingScrollRef.current;
+      pendingScrollRef.current = null;
+      if (isMobile) {
+        scrollToMonth(target, 'smooth');
+      } else {
+        monthRefs.current[target]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [year, isMobile, currentYear]);
+
+  function handleGoToToday() {
+    if (isMobile) {
+      if (year !== currentYear) {
+        pendingScrollRef.current = currentMonth;
+        setActiveMonth(currentMonth);
+        onYearChange(currentYear);
+      } else {
+        selectMonth(currentMonth);
+      }
+    } else {
+      if (year !== currentYear) {
+        pendingScrollRef.current = currentMonth;
+        onYearChange(currentYear);
+      } else {
+        monthRefs.current[currentMonth]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+
+  const isMobileTodayInView = year === currentYear && activeMonth === currentMonth;
+  const showMobileToday = !isMobileTodayInView;
+
+  const isDesktopTodayInView = year === currentYear && isCurrentMonthVisible;
+  const showDesktopToday = !isDesktopTodayInView;
+  const statsNode = renderStats ? renderStats(activeMonth) : null;
+
   const rememberMonth: RefCallback<HTMLElement> = (el) => {
     if (!el) return;
     const month = Number(el.dataset.month);
@@ -127,8 +207,11 @@ export const YearCalendarShell = memo(function YearCalendarShell({
 
   return (
     <div className={isMobile ? undefined : 'mx-auto w-full max-w-[1340px] pb-8'}>
+      {!isMobile && statsNode && (
+        <div className="mb-4 flex justify-center sm:mb-6">{statsNode}</div>
+      )}
       {!isMobile && (
-        <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
+        <div ref={topBarRef} className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
           <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
             <button
               type="button"
@@ -152,13 +235,41 @@ export const YearCalendarShell = memo(function YearCalendarShell({
               <Chevron direction="right" />
             </button>
           </div>
+          {showDesktopToday && (
+            <button
+              type="button"
+              onClick={handleGoToToday}
+              aria-label="Перейти к сегодняшней дате"
+              className="flex h-11 items-center gap-1.5 rounded-2xl border border-[color:var(--border)] px-4 text-sm font-medium text-[color:var(--text-primary)] surface transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] active:scale-95"
+            >
+              <CalendarIcon size={16} />
+              Сегодня
+            </button>
+          )}
         </div>
       )}
 
       {!isMobile && <MonthNav year={year} monthRefs={monthRefs} />}
 
+      {!isMobile && showDesktopToday && !topBarVisible && (
+        <button
+          type="button"
+          onClick={handleGoToToday}
+          aria-label="Перейти к сегодняшней дате"
+          className="fixed bottom-6 right-6 z-30 flex items-center gap-1.5 rounded-full border border-[color:var(--border)] px-4 py-2.5 text-sm font-semibold text-[color:var(--text-primary)] surface shadow-xl transition hover:bg-[color:var(--bg-elevated-2)] active:scale-95"
+        >
+          <CalendarIcon size={16} />
+          Сегодня
+        </button>
+      )}
+
       {isMobile ? (
         <div className="pointer-events-none fixed inset-0 z-20">
+          {statsNode && (
+            <div className="pointer-events-auto absolute inset-x-0 top-14 flex justify-center px-3">
+              {statsNode}
+            </div>
+          )}
           <button
             type="button"
             aria-haspopup="dialog"
@@ -202,7 +313,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
             aria-label={`Месяцы ${year}`}
           >
             {Array.from({ length: 12 }, (_, month) => (
-              <div key={month} className="basis-full shrink-0 snap-center snap-always px-4 py-1">
+              <div key={month} className="basis-full shrink-0 snap-center snap-always px-4 py-3">
                 <MonthSlot month={month} onElement={rememberMonth} hasMark={hasMark(month)}>
                   {renderMonth(month)}
                 </MonthSlot>
@@ -212,6 +323,19 @@ export const YearCalendarShell = memo(function YearCalendarShell({
           <p className="sr-only" aria-live="polite">
             {MONTHS_RU[activeMonth]}
           </p>
+
+          {showMobileToday && cardBox.height > 0 && (
+            <button
+              type="button"
+              onClick={handleGoToToday}
+              aria-label="Перейти к сегодняшней дате"
+              className="surface pointer-events-auto absolute left-1/2 flex items-center gap-1.5 rounded-full border border-[color:var(--border)] px-4 py-2 text-sm font-medium text-[color:var(--text-primary)] shadow-lg transition active:scale-95"
+              style={{ top: '50%', transform: `translate(-50%, ${cardBox.height / 2 + 14}px)` }}
+            >
+              <CalendarIcon size={16} />
+              Сегодня
+            </button>
+          )}
         </div>
       ) : (
         <div className="-mx-4 grid justify-center grid-cols-1 gap-4 md:mx-0 md:grid-cols-[repeat(2,minmax(0,20rem))] md:gap-3 xl:grid-cols-[repeat(3,minmax(0,20rem))] xl:gap-4 2xl:grid-cols-[repeat(4,minmax(0,20rem))] 2xl:gap-5">
@@ -258,7 +382,7 @@ function MonthSlot({
       {hasMark && (
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full"
+          className="pointer-events-none absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full ring-2 ring-[var(--bg-elevated)]"
           style={{ backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
         />
       )}
@@ -282,6 +406,27 @@ function Chevron({ direction, size = 18 }: { direction: 'left' | 'right' | 'down
       strokeLinejoin="round"
     >
       <polyline points={points} />
+    </svg>
+  );
+}
+
+function CalendarIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      aria-hidden
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
     </svg>
   );
 }

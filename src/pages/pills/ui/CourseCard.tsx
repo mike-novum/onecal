@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { formatDayTitle } from '@/shared/lib';
 import type { PillCourse } from '@/shared/model';
 
@@ -14,6 +15,8 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   return (
     <div className="surface group rounded-2xl p-4 transition hover:border-[color:var(--border-strong)] sm:p-5">
       <div className="mb-2 flex items-start justify-between gap-3">
@@ -23,21 +26,46 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
             {formatDayTitle(course.startDate)} — {formatDayTitle(course.endDate)}
           </div>
         </div>
-        <div className="flex shrink-0 gap-2">
-          <button
-            type="button"
-            onClick={onEdit}
-            className="rounded-lg border border-[color:var(--border)] px-2.5 py-1 text-xs text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-          >
-            Изменить
-          </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            className="rounded-lg border border-[color:var(--border)] px-2.5 py-1 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-          >
-            Удалить
-          </button>
+        <div className="flex shrink-0 items-center gap-2">
+          {confirmDelete ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-red-500">Удалить курс?</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmDelete(false);
+                  onDelete();
+                }}
+                className="rounded-lg bg-red-600 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-red-700 active:scale-95"
+              >
+                Да, удалить
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                className="rounded-lg border border-[color:var(--border)] px-2.5 py-1 text-xs text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+              >
+                Отмена
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={onEdit}
+                className="rounded-lg border border-[color:var(--border)] px-2.5 py-1 text-xs text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+              >
+                Изменить
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="rounded-lg border border-[color:var(--border)] px-2.5 py-1 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+              >
+                Удалить
+              </button>
+            </>
+          )}
         </div>
       </div>
       <ul className="mt-2 space-y-1 text-sm text-[color:var(--text-secondary)]">

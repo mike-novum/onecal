@@ -51,3 +51,20 @@ test('свичер года переключает год', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Предыдущий год' }));
   expect(screen.getByText('2025')).toBeInTheDocument();
 });
+
+test('отображает статистику чистых дней и отметок в месяце', () => {
+  useAppStore.setState({
+    alcohol: {
+      '2026-10-01': { items: ['beer'], wasBad: false },
+    },
+  });
+  render(
+    <MemoryRouter>
+      <AlcoholPage />
+    </MemoryRouter>,
+  );
+  expect(screen.getByTestId('stats-widget')).toBeInTheDocument();
+  expect(screen.getByText('Серия чистых дней')).toBeInTheDocument();
+  expect(screen.getByText('4 дня')).toBeInTheDocument();
+  expect(screen.getByText('1 отметка')).toBeInTheDocument();
+});

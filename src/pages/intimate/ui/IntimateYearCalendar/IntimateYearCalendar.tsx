@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type ReactNode } from 'react';
 import { buildMonthGrid } from '@/shared/lib';
 import { YearCalendarShell } from '@/shared/ui';
 import { IntimateMonthCard } from '../IntimateMonthCard';
@@ -8,6 +8,7 @@ interface IntimateYearCalendarProps {
   onYearChange: (year: number) => void;
   getEmoji: (iso: string) => string | null;
   onDayClick: (iso: string) => void;
+  renderStats?: (activeMonth: number) => ReactNode;
 }
 
 export const IntimateYearCalendar = memo(function IntimateYearCalendar({
@@ -15,6 +16,7 @@ export const IntimateYearCalendar = memo(function IntimateYearCalendar({
   onYearChange,
   getEmoji,
   onDayClick,
+  renderStats,
 }: IntimateYearCalendarProps) {
   function countForMonth(m: number): number {
     const grid = buildMonthGrid(year, m);
@@ -26,6 +28,7 @@ export const IntimateYearCalendar = memo(function IntimateYearCalendar({
       year={year}
       onYearChange={onYearChange}
       hasMark={(month) => countForMonth(month) > 0}
+      renderStats={renderStats}
       renderMonth={(month) => (
         <IntimateMonthCard year={year} month={month} getEmoji={getEmoji} onDayClick={onDayClick} />
       )}
