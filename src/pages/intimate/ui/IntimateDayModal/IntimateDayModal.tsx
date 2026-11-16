@@ -65,6 +65,8 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
     }
   }
 
+  const hasData = Boolean(initial && ((initial.sex ?? 0) > 0 || (initial.masturbation ?? 0) > 0));
+
   return (
     <div
       data-testid="intimate-modal-overlay"
@@ -92,28 +94,24 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
           </button>
         </div>
 
-        <p className="mb-3 text-sm text-[color:var(--text-secondary)]">
-          Нажмите слева для уменьшения, справа — для увеличения
-        </p>
-
         <div className="mb-5 flex flex-col gap-3">
           <button
             type="button"
             aria-label={`Секс: ${sex}`}
             onClick={(e) => handleCounterClick(e, setSex)}
             onKeyDown={(e) => handleKeyDown(e, setSex)}
-            className="group relative flex h-16 w-full items-center justify-between overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] transition select-none hover:border-[color:var(--border-strong)]"
+            className="group relative flex h-16 w-full items-center justify-between overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] px-4 transition select-none hover:border-[color:var(--border-strong)]"
           >
             <div
               data-action="decrement"
               data-testid="sex-decrement"
               aria-hidden="true"
-              className="absolute inset-y-0 left-0 flex w-1/2 items-center justify-start pl-4 transition hover:bg-white/5 active:bg-white/10"
+              className="absolute inset-y-0 left-0 flex w-1/2 items-center justify-start pl-3"
             >
               <span
                 className={[
-                  'flex h-8 w-8 items-center justify-center rounded-xl border border-[color:var(--border)] text-lg font-bold transition',
-                  sex === 0 ? 'text-[color:var(--text-muted)] opacity-30' : 'text-[color:var(--text-secondary)]',
+                  'flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated)] text-xl font-bold transition hover:border-[color:var(--border-strong)] active:scale-95',
+                  sex === 0 ? 'text-[color:var(--text-muted)] opacity-30 cursor-not-allowed' : 'text-[color:var(--text-primary)]',
                 ].join(' ')}
               >
                 −
@@ -138,9 +136,9 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
               data-action="increment"
               data-testid="sex-increment"
               aria-hidden="true"
-              className="absolute inset-y-0 right-0 flex w-1/2 items-center justify-end pr-4 transition hover:bg-white/5 active:bg-white/10"
+              className="absolute inset-y-0 right-0 flex w-1/2 items-center justify-end pr-3"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-[color:var(--border)] text-lg font-bold text-[color:var(--text-secondary)] transition">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated)] text-xl font-bold text-[color:var(--text-primary)] transition hover:border-[color:var(--border-strong)] active:scale-95">
                 +
               </span>
             </div>
@@ -151,18 +149,18 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
             aria-label={`Мастурбация: ${masturbation}`}
             onClick={(e) => handleCounterClick(e, setMasturbation)}
             onKeyDown={(e) => handleKeyDown(e, setMasturbation)}
-            className="group relative flex h-16 w-full items-center justify-between overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] transition select-none hover:border-[color:var(--border-strong)]"
+            className="group relative flex h-16 w-full items-center justify-between overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] px-4 transition select-none hover:border-[color:var(--border-strong)]"
           >
             <div
               data-action="decrement"
               data-testid="masturbation-decrement"
               aria-hidden="true"
-              className="absolute inset-y-0 left-0 flex w-1/2 items-center justify-start pl-4 transition hover:bg-white/5 active:bg-white/10"
+              className="absolute inset-y-0 left-0 flex w-1/2 items-center justify-start pl-3"
             >
               <span
                 className={[
-                  'flex h-8 w-8 items-center justify-center rounded-xl border border-[color:var(--border)] text-lg font-bold transition',
-                  masturbation === 0 ? 'text-[color:var(--text-muted)] opacity-30' : 'text-[color:var(--text-secondary)]',
+                  'flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated)] text-xl font-bold transition hover:border-[color:var(--border-strong)] active:scale-95',
+                  masturbation === 0 ? 'text-[color:var(--text-muted)] opacity-30 cursor-not-allowed' : 'text-[color:var(--text-primary)]',
                 ].join(' ')}
               >
                 −
@@ -187,9 +185,9 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
               data-action="increment"
               data-testid="masturbation-increment"
               aria-hidden="true"
-              className="absolute inset-y-0 right-0 flex w-1/2 items-center justify-end pr-4 transition hover:bg-white/5 active:bg-white/10"
+              className="absolute inset-y-0 right-0 flex w-1/2 items-center justify-end pr-3"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-[color:var(--border)] text-lg font-bold text-[color:var(--text-secondary)] transition">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated)] text-xl font-bold text-[color:var(--text-primary)] transition hover:border-[color:var(--border-strong)] active:scale-95">
                 +
               </span>
             </div>
@@ -197,13 +195,17 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
         </div>
 
         <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => onSave(null)}
-            className="rounded-xl border border-[color:var(--border)] px-3 py-1.5 text-sm text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-          >
-            Очистить день
-          </button>
+          {hasData ? (
+            <button
+              type="button"
+              onClick={() => onSave(null)}
+              className="rounded-xl border border-[color:var(--border)] px-3 py-1.5 text-sm text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+            >
+              Очистить день
+            </button>
+          ) : (
+            <div />
+          )}
           <button
             type="button"
             onClick={save}

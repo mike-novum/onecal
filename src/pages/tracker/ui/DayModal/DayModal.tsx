@@ -86,13 +86,17 @@ export function DayModal({ title, catalog, initial, badLabel, onSave, onClose }:
           <ToggleSwitch checked={wasBad} onChange={setWasBad} label={badLabel} />
         </div>
         <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => onSave(null)}
-            className="rounded-xl border border-[color:var(--border)] px-3 py-1.5 text-sm text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-          >
-            Очистить день
-          </button>
+          {initial && (initial.items.length > 0 || initial.wasBad) ? (
+            <button
+              type="button"
+              onClick={() => onSave(null)}
+              className="rounded-xl border border-[color:var(--border)] px-3 py-1.5 text-sm text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+            >
+              Очистить день
+            </button>
+          ) : (
+            <div />
+          )}
           <button
             type="button"
             onClick={save}

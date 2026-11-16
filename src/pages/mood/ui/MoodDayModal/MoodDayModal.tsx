@@ -187,13 +187,21 @@ export function MoodDayModal({ title, initial, onSave, onClose }: MoodDayModalPr
         </div>
 
         <div className="flex items-center justify-between gap-2 px-5 py-4">
-          <button
-            type="button"
-            onClick={() => onSave(null)}
-            className="rounded-xl border border-[color:var(--border)] px-3 py-1.5 text-sm text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
-          >
-            Очистить день
-          </button>
+          {initial &&
+          (initial.emotions.length > 0 ||
+            (initial.negativeReasons && initial.negativeReasons.length > 0) ||
+            (initial.positiveReasons && initial.positiveReasons.length > 0) ||
+            (initial.note && initial.note.trim().length > 0)) ? (
+            <button
+              type="button"
+              onClick={() => onSave(null)}
+              className="rounded-xl border border-[color:var(--border)] px-3 py-1.5 text-sm text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-primary)]"
+            >
+              Очистить день
+            </button>
+          ) : (
+            <div />
+          )}
           <button
             type="button"
             onClick={save}
