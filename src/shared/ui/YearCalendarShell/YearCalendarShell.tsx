@@ -313,7 +313,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
             aria-label={`Месяцы ${year}`}
           >
             {Array.from({ length: 12 }, (_, month) => (
-              <div key={month} className="basis-full shrink-0 snap-center snap-always px-4 py-1">
+              <div key={month} className="basis-full shrink-0 snap-center snap-always px-4 py-3">
                 <MonthSlot month={month} onElement={rememberMonth} hasMark={hasMark(month)}>
                   {renderMonth(month)}
                 </MonthSlot>
@@ -382,7 +382,7 @@ function MonthSlot({
       {hasMark && (
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full"
+          className="pointer-events-none absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full ring-2 ring-[var(--bg-elevated)]"
           style={{ backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }}
         />
       )}
