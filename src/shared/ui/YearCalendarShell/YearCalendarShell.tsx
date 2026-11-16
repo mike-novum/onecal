@@ -15,6 +15,7 @@ interface YearCalendarShellProps {
   onYearChange: (year: number) => void;
   hasMark: (month: number) => boolean;
   renderMonth: (month: number) => ReactNode;
+  renderStats?: (activeMonth: number) => ReactNode;
 }
 
 export const YearCalendarShell = memo(function YearCalendarShell({
@@ -22,6 +23,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
   onYearChange,
   hasMark,
   renderMonth,
+  renderStats,
 }: YearCalendarShellProps) {
   const [{ year: currentYear, month: currentMonth }] = useState(() => {
     const now = new Date();
@@ -194,6 +196,7 @@ export const YearCalendarShell = memo(function YearCalendarShell({
 
   const isDesktopTodayInView = year === currentYear && isCurrentMonthVisible;
   const showDesktopToday = !isDesktopTodayInView;
+  const statsNode = renderStats ? renderStats(activeMonth) : null;
 
   const rememberMonth: RefCallback<HTMLElement> = (el) => {
     if (!el) return;
@@ -204,6 +207,9 @@ export const YearCalendarShell = memo(function YearCalendarShell({
 
   return (
     <div className={isMobile ? undefined : 'mx-auto w-full max-w-[1340px] pb-8'}>
+      {!isMobile && statsNode && (
+        <div className="mb-4 flex justify-center sm:mb-6">{statsNode}</div>
+      )}
       {!isMobile && (
         <div ref={topBarRef} className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:mb-8">
           <div className="flex items-center gap-1 rounded-2xl border border-[color:var(--border)] p-1 surface">
@@ -259,6 +265,11 @@ export const YearCalendarShell = memo(function YearCalendarShell({
 
       {isMobile ? (
         <div className="pointer-events-none fixed inset-0 z-20">
+          {statsNode && (
+            <div className="pointer-events-auto absolute inset-x-0 top-14 flex justify-center px-3">
+              {statsNode}
+            </div>
+          )}
           <button
             type="button"
             aria-haspopup="dialog"

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { triggerHaptic } from '@/shared/lib';
 import type { IntimateLog } from '@/shared/model';
 
 interface IntimateDayModalProps {
@@ -24,6 +25,7 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
     e: React.MouseEvent<HTMLButtonElement>,
     setCount: React.Dispatch<React.SetStateAction<number>>,
   ) {
+    triggerHaptic('light');
     const target = e.target as HTMLElement;
     if (target.closest('[data-action="decrement"]')) {
       setCount((c) => Math.max(0, c - 1));
@@ -50,14 +52,17 @@ export function IntimateDayModal({ title, initial, onSave, onClose }: IntimateDa
   ) {
     if (e.key === 'ArrowLeft' || e.key === '-') {
       e.preventDefault();
+      triggerHaptic('light');
       setCount((c) => Math.max(0, c - 1));
     } else if (e.key === 'ArrowRight' || e.key === '+' || e.key === '=') {
       e.preventDefault();
+      triggerHaptic('light');
       setCount((c) => c + 1);
     }
   }
 
   function save() {
+    triggerHaptic('light');
     if (sex === 0 && masturbation === 0) {
       onSave(null);
     } else {

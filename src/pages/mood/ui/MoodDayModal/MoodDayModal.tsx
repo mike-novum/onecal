@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { triggerHaptic } from '@/shared/lib';
 import type { MoodLog } from '@/shared/model';
 import { EMOTIONS } from '../../config/emotions';
 import { NEGATIVE_REASONS, POSITIVE_REASONS } from '../../config/reasons';
@@ -126,6 +127,7 @@ export function MoodDayModal({ title, initial, onSave, onClose }: MoodDayModalPr
   }, [onClose]);
 
   function save() {
+    triggerHaptic('light');
     onSave(toSavedLog(emotions, negativeReasons, positiveReasons, note));
   }
 

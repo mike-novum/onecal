@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { triggerHaptic } from '@/shared/lib';
 import type { DayLog } from '@/shared/model';
 import type { CatalogItem } from '../../config/catalogs';
 import { ToggleSwitch } from '../ToggleSwitch';
@@ -30,6 +31,7 @@ export function DayModal({ title, catalog, initial, badLabel, onSave, onClose }:
   }
 
   function save() {
+    triggerHaptic('light');
     onSave(items.length === 0 && !wasBad ? null : { items, wasBad });
   }
 

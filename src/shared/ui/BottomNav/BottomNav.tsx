@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { triggerHaptic } from '@/shared/lib';
 
 const NAV_ITEMS = [
   { to: '/alcohol', icon: '🍷', label: 'Алкоголь' },
@@ -25,6 +26,7 @@ export const BottomNav = memo(function BottomNav() {
         <NavLink
           key={item.to}
           to={item.to}
+          onClick={() => triggerHaptic('light')}
           className={({ isActive }) =>
             [
               'flex min-h-[44px] flex-1 flex-col items-center justify-center rounded-xl py-1 transition select-none',

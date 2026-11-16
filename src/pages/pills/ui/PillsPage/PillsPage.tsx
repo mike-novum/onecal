@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GanttChart } from '../GanttChart';
 import { CourseCard } from '../CourseCard';
 import { CourseForm } from '../CourseForm';
+import { TodayChecklist } from '../TodayChecklist';
 import { useAppStore, type PillCourse } from '@/shared/model';
 
 type Mode = 'list' | 'gantt';
@@ -26,6 +27,8 @@ export function PillsPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
+      <TodayChecklist courses={pillCourses} />
+
       <div className="mb-6 flex items-center justify-between gap-3">
         <div
           role="tablist"

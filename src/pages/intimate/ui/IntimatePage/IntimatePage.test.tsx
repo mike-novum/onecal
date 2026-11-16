@@ -63,3 +63,21 @@ test('ячейка календаря отображает эмодзи в за�
   expect(within(october).getByRole('button', { name: 'день 2' })).toHaveTextContent('💦');
   expect(within(october).getByRole('button', { name: 'день 3' })).toHaveTextContent('🔥');
 });
+
+test('отображает статистику интимных событий за месяц', () => {
+  useAppStore.setState({
+    intimate: {
+      '2026-10-01': { sex: 2, masturbation: 1 },
+      '2026-10-02': { sex: 1, masturbation: 0 },
+    },
+  });
+  render(
+    <MemoryRouter>
+      <IntimatePage />
+    </MemoryRouter>,
+  );
+  expect(screen.getByTestId('stats-widget')).toBeInTheDocument();
+  expect(screen.getByText('4 события')).toBeInTheDocument();
+  expect(screen.getByText('Детализация')).toBeInTheDocument();
+  expect(screen.getByText('секс: 3 · мастурбация: 1')).toBeInTheDocument();
+});
