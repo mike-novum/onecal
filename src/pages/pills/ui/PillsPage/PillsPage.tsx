@@ -90,7 +90,7 @@ export function PillsPage() {
         </div>
       )}
 
-      {mode === 'gantt' && <GanttChart courses={pillCourses} />}
+      {mode === 'gantt' && pillCourses.length > 0 && <GanttChart courses={pillCourses} />}
 
       {editing && (
         <CourseForm

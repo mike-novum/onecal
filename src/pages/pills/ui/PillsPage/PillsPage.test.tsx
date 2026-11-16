@@ -58,3 +58,10 @@ test('клик «Удалить» на карточке требует подт�
   fireEvent.click(screen.getByRole('button', { name: 'Да, удалить' }));
   expect(useAppStore.getState().pillCourses).toHaveLength(0);
 });
+
+test('в режиме «Гантт» при пустом списке отображается только одна заглушка', () => {
+  renderPage();
+  fireEvent.click(screen.getByRole('tab', { name: 'Гантт' }));
+  expect(screen.getByText('Нет курсов. Нажмите «Новый курс», чтобы добавить.')).toBeInTheDocument();
+  expect(screen.queryByText('Нет курсов для отображения')).not.toBeInTheDocument();
+});
