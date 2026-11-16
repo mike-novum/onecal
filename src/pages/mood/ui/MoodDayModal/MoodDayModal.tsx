@@ -85,11 +85,37 @@ function TagGroup({
   );
 }
 
+const POSITIVE_EMOTION_IDS = new Set(['joy', 'calm', 'love', 'inspiration', 'gratitude', 'pride', 'interest']);
+
+function CollapsedGroupTrigger({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <div className="mb-5">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={label}
+        className="flex items-center gap-1.5 rounded-xl border border-dashed border-[color:var(--border)] px-3.5 py-2 text-xs font-medium text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--bg-elevated-2)] hover:text-[color:var(--text-secondary)] active:scale-95"
+      >
+        <span aria-hidden>+ </span>
+        {label}
+      </button>
+    </div>
+  );
+}
+
 export function MoodDayModal({ title, initial, onSave, onClose }: MoodDayModalProps) {
   const [emotions, setEmotions] = useState<string[]>(initial?.emotions ?? []);
   const [negativeReasons, setNegativeReasons] = useState<string[]>(initial?.negativeReasons ?? []);
   const [positiveReasons, setPositiveReasons] = useState<string[]>(initial?.positiveReasons ?? []);
   const [note, setNote] = useState(initial?.note ?? '');
+  const [showNegativeReasons, setShowNegativeReasons] = useState(false);
+  const [showPositiveReasons, setShowPositiveReasons] = useState(false);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -111,6 +137,21 @@ export function MoodDayModal({ title, initial, onSave, onClose }: MoodDayModalPr
     bad: 'Много негатива',
     critical: 'Очень тяжело',
   };
+
+  const hasPositiveEmotions = emotions.some((e) => POSITIVE_EMOTION_IDS.has(e));
+  const hasNegativeEmotions = emotions.some((e) => !POSITIVE_EMOTION_IDS.has(e));
+
+  const shouldCollapseNegative =
+    hasPositiveEmotions &&
+    !hasNegativeEmotions &&
+    negativeReasons.length === 0 &&
+    !showNegativeReasons;
+
+  const shouldCollapsePositive =
+    hasNegativeEmotions &&
+    !hasPositiveEmotions &&
+    positiveReasons.length === 0 &&
+    !showPositiveReasons;
 
   return (
     <div
@@ -161,18 +202,59 @@ export function MoodDayModal({ title, initial, onSave, onClose }: MoodDayModalPr
             selected={emotions}
             onToggle={(id) => setEmotions((prev) => toggleId(prev, id))}
           />
-          <TagGroup
-            label="Причины негативных эмоций"
-            options={NEGATIVE_REASONS}
-            selected={negativeReasons}
-            onToggle={(id) => setNegativeReasons((prev) => toggleId(prev, id))}
-          />
-          <TagGroup
-            label="Причины положительных эмоций"
-            options={POSITIVE_REASONS}
-            selected={positiveReasons}
-            onToggle={(id) => setPositiveReasons((prev) => toggleId(prev, id))}
-          />
+
+          {hasPositiveEmotions && !hasNegativeEmotions ? (
+            <>
+              <TagGroup
+                label="Причины положительных эмоций"
+                options={POSITIVE_REASONS}
+                selected={positiveReasons}
+                onToggle={(id) => setPositiveReasons((prev) => toggleId(prev, id))}
+              />
+              {shouldCollapseNegative ? (
+                <CollapsedGroupTrigger
+                  label="Было что-то неприятное?"
+                  onClick={() => setShowNegativeReasons(true)}
+                />
+              ) : (
+                <TagGroup
+                  label="Причины негативных эмоций"
+                  options={NEGATIVE_REASONS}
+                  selected={negativeReasons}
+                  onToggle={(id) => setNegativeReasons((prev) => toggleId(prev, id))}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {shouldCollapseNegative ? (
+                <CollapsedGroupTrigger
+                  label="Было что-то неприятное?"
+                  onClick={() => setShowNegativeReasons(true)}
+                />
+              ) : (
+                <TagGroup
+                  label="Причины негативных эмоций"
+                  options={NEGATIVE_REASONS}
+                  selected={negativeReasons}
+                  onToggle={(id) => setNegativeReasons((prev) => toggleId(prev, id))}
+                />
+              )}
+              {shouldCollapsePositive ? (
+                <CollapsedGroupTrigger
+                  label="Было что-то приятное?"
+                  onClick={() => setShowPositiveReasons(true)}
+                />
+              ) : (
+                <TagGroup
+                  label="Причины положительных эмоций"
+                  options={POSITIVE_REASONS}
+                  selected={positiveReasons}
+                  onToggle={(id) => setPositiveReasons((prev) => toggleId(prev, id))}
+                />
+              )}
+            </>
+          )}
 
           <label className="mb-5 flex flex-col gap-2 text-sm text-[color:var(--text-secondary)]">
             Заметка

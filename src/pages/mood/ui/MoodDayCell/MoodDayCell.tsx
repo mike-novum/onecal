@@ -27,7 +27,9 @@ export const MoodDayCell = memo(function MoodDayCell({
       aria-label={`день ${dayNumber}`}
       aria-current={isToday ? 'date' : undefined}
       className={[
-        'group relative flex h-9 w-9 items-center justify-center rounded-md border text-center text-[13px] tabular-nums transition',
+        'group relative flex h-9 w-9 items-center justify-center rounded-md border text-center text-[13px] tabular-nums transition touch-manipulation',
+        'before:absolute before:-inset-1 before:content-[\'\']',
+        'active:scale-95',
         isToday && !hasMood
           ? 'border-transparent font-semibold text-white'
           : isToday && hasMood

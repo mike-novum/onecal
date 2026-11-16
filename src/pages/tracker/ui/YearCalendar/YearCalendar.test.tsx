@@ -68,3 +68,13 @@ test('клик по чипу вызывает прокрутку к соотве
   fireEvent.click(sep);
   expect(sep).toBeInTheDocument();
 });
+
+test('кнопка «Сегодня» появляется при просмотре другого года и переключает на текущий год', () => {
+  const currentYear = new Date().getFullYear();
+  const { onYearChange } = renderCalendar({ year: 2020 });
+  const todayButton = screen.getByRole('button', { name: 'Перейти к сегодняшней дате' });
+  expect(todayButton).toBeInTheDocument();
+
+  fireEvent.click(todayButton);
+  expect(onYearChange).toHaveBeenCalledWith(currentYear);
+});
