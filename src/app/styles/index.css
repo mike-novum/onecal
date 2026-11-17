@@ -72,6 +72,14 @@ textarea {
   letter-spacing: inherit;
 }
 
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @supports (-webkit-touch-callout: none) {
   input[type='date'] {
     display: block;
