@@ -102,7 +102,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
             />
           </label>
           <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
-            <label className={`${labelClass} min-w-0`}>
+            <label className={`${labelClass} w-full min-w-0`}>
               Начало
               <input
                 type="date"
@@ -111,7 +111,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                 className={inputClass}
               />
             </label>
-            <label className={`${labelClass} min-w-0`}>
+            <label className={`${labelClass} w-full min-w-0`}>
               Окончание
               <input
                 type="date"
