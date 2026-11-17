@@ -16,7 +16,7 @@ const INTAKE_OPTIONS: { value: Intake; label: string }[] = [
 const EMPTY_MED: Medication = { name: '', dosage: '', timesPerDay: 1, intake: 'after' };
 
 const inputClass =
-  'rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] px-3 py-1.5 text-sm text-[color:var(--text-primary)] outline-none transition focus:border-[color:var(--accent)] focus:bg-[color:var(--bg-elevated)]';
+  'w-full min-w-0 max-w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] px-3 py-1.5 text-sm text-[color:var(--text-primary)] outline-none transition focus:border-[color:var(--accent)] focus:bg-[color:var(--bg-elevated)]';
 const labelClass = 'flex flex-col gap-1.5 text-sm text-[color:var(--text-secondary)]';
 const subLabelClass = 'flex flex-col gap-1.5 text-xs text-[color:var(--text-muted)]';
 
@@ -77,14 +77,14 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
   return (
     <div
       data-testid="modal-overlay"
-      className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center overflow-hidden p-0 sm:items-center sm:p-4"
       onClick={onCancel}
       style={{ background: 'var(--bg-overlay)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
     >
       <div
         role="dialog"
         aria-label={initial ? 'Редактировать курс' : 'Новый курс'}
-        className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-[color:var(--border)] p-5 sm:rounded-2xl"
+        className="max-h-[92vh] w-full min-w-0 max-w-lg overflow-x-hidden overflow-y-auto rounded-t-3xl border border-[color:var(--border)] p-5 sm:rounded-2xl"
         style={{ background: 'var(--bg-elevated)', boxShadow: 'var(--shadow-lg), var(--shadow-inset)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -101,8 +101,8 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
               className={inputClass}
             />
           </label>
-          <div className="flex gap-3">
-            <label className={`${labelClass} flex-1`}>
+          <div className="grid grid-cols-2 gap-3">
+            <label className={`${labelClass} min-w-0`}>
               Начало
               <input
                 type="date"
@@ -111,7 +111,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                 className={inputClass}
               />
             </label>
-            <label className={`${labelClass} flex-1`}>
+            <label className={`${labelClass} min-w-0`}>
               Окончание
               <input
                 type="date"
@@ -131,8 +131,8 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
               className="mb-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] p-3"
             >
               <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                  <label className={`${subLabelClass} flex-1`}>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className={`${subLabelClass} min-w-0`}>
                     Название препарата
                     <input
                       value={med.name}
@@ -140,7 +140,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                       className={inputClass}
                     />
                   </label>
-                  <label className={`${subLabelClass} flex-1`}>
+                  <label className={`${subLabelClass} min-w-0`}>
                     Дозировка
                     <input
                       value={med.dosage}
@@ -149,8 +149,8 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                     />
                   </label>
                 </div>
-                <div className="flex items-end gap-2">
-                  <label className={`${subLabelClass} w-24`}>
+                <div className="flex flex-wrap items-end gap-2">
+                  <label className={`${subLabelClass} w-24 min-w-0 shrink-0`}>
                     Раз в день
                     <input
                       type="number"
@@ -160,7 +160,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                       className={inputClass}
                     />
                   </label>
-                  <label className={`${subLabelClass} flex-1`}>
+                  <label className={`${subLabelClass} min-w-36 flex-1`}>
                     Приём
                     <select
                       value={med.intake}
@@ -177,7 +177,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                   <button
                     type="button"
                     onClick={() => setMedications((prev) => prev.filter((_, j) => j !== i))}
-                    className="shrink-0 rounded-lg border border-[color:var(--border)] px-2.5 py-1.5 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:text-[color:var(--text-primary)]"
+                    className="ml-auto shrink-0 rounded-lg border border-[color:var(--border)] px-2.5 py-1.5 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:text-[color:var(--text-primary)]"
                   >
                     Удалить
                   </button>
