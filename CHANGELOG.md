@@ -1,3 +1,9 @@
+## [1.7.3](https://github.com/mike-novum/onecal/compare/v1.7.2...v1.7.3) (2026-11-17)
+
+### Bug Fixes
+
+* поля дат курса не вылезают за правый край на iPhone ([#12](https://github.com/mike-novum/onecal/issues/12)) ([7618960](https://github.com/mike-novum/onecal/commit/7618960f096e6d1a147bdbeeec5c15cd3d3b83a7))
+
 ## [1.7.2](https://github.com/mike-novum/onecal/compare/v1.7.1...v1.7.2) (2026-11-17)
 
 ### Bug Fixes
