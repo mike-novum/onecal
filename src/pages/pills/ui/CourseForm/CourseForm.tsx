@@ -101,7 +101,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
               className={inputClass}
             />
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
             <label className={`${labelClass} min-w-0`}>
               Начало
               <input
@@ -128,7 +128,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
           {medications.map((med, i) => (
             <div
               key={i}
-              className="mb-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] p-3"
+              className="mb-2 min-w-0 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] p-3"
             >
               <div className="flex flex-col gap-2">
                 <div className="grid grid-cols-2 gap-2">
@@ -149,8 +149,8 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                     />
                   </label>
                 </div>
-                <div className="flex flex-wrap items-end gap-2">
-                  <label className={`${subLabelClass} w-24 min-w-0 shrink-0`}>
+                <div className="grid min-w-0 grid-cols-[6rem_minmax(0,1fr)] items-end gap-2 sm:grid-cols-[6rem_minmax(0,1fr)_auto]">
+                  <label className={`${subLabelClass} min-w-0`}>
                     Раз в день
                     <input
                       type="number"
@@ -160,24 +160,26 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
                       className={inputClass}
                     />
                   </label>
-                  <label className={`${subLabelClass} min-w-36 flex-1`}>
+                  <label className={`${subLabelClass} min-w-0 overflow-hidden`}>
                     Приём
-                    <select
-                      value={med.intake}
-                      onChange={(e) => updateMed(i, { intake: e.target.value as Intake })}
-                      className={inputClass}
-                    >
-                      {INTAKE_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
+                    <span className="grid min-w-0 grid-cols-1 overflow-hidden">
+                      <select
+                        value={med.intake}
+                        onChange={(e) => updateMed(i, { intake: e.target.value as Intake })}
+                        className={`${inputClass} col-start-1 row-start-1`}
+                      >
+                        {INTAKE_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </span>
                   </label>
                   <button
                     type="button"
                     onClick={() => setMedications((prev) => prev.filter((_, j) => j !== i))}
-                    className="ml-auto shrink-0 rounded-lg border border-[color:var(--border)] px-2.5 py-1.5 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:text-[color:var(--text-primary)]"
+                    className="col-span-2 justify-self-end rounded-lg border border-[color:var(--border)] px-2.5 py-1.5 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:text-[color:var(--text-primary)] sm:col-span-1"
                   >
                     Удалить
                   </button>
