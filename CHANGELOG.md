@@ -1,3 +1,9 @@
+## [1.7.2](https://github.com/mike-novum/onecal/compare/v1.7.1...v1.7.2) (2026-11-17)
+
+### Bug Fixes
+
+* даты курса не перекрываются на телефоне ([#11](https://github.com/mike-novum/onecal/issues/11)) ([3910f10](https://github.com/mike-novum/onecal/commit/3910f10de9793ecd05f72f8de06a4abb0c878086))
+
 ## [1.7.1](https://github.com/mike-novum/onecal/compare/v1.7.0...v1.7.1) (2026-11-17)
 
 ### Bug Fixes
