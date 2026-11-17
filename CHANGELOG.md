@@ -1,3 +1,9 @@
+## [1.7.4](https://github.com/mike-novum/onecal/compare/v1.7.3...v1.7.4) (2026-11-17)
+
+### Bug Fixes
+
+* iPhone больше не увеличивает страницу при открытии формы курса ([#13](https://github.com/mike-novum/onecal/issues/13)) ([d7829c2](https://github.com/mike-novum/onecal/commit/d7829c26a1a97f53fa7c8672df1c66e9f51d6d8d))
+
 ## [1.7.3](https://github.com/mike-novum/onecal/compare/v1.7.2...v1.7.3) (2026-11-17)
 
 ### Bug Fixes
