@@ -101,7 +101,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
               className={inputClass}
             />
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
             <label className={`${labelClass} min-w-0`}>
               Начало
               <input
