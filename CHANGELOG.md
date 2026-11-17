@@ -1,3 +1,9 @@
+## [1.7.1](https://github.com/mike-novum/onecal/compare/v1.7.0...v1.7.1) (2026-11-17)
+
+### Bug Fixes
+
+* форма заполнения курса теперь не выезжает за край экрана на мобильных устройствах ([#10](https://github.com/mike-novum/onecal/issues/10)) ([ab4afb4](https://github.com/mike-novum/onecal/commit/ab4afb4cdbe8fc50f2ccab559a8dfb665a6815a7))
+
 ## [1.7.0](https://github.com/mike-novum/onecal/compare/v1.6.0...v1.7.0) (2026-11-16)
 
 ### Features
