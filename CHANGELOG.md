@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/mike-novum/onecal/compare/v1.7.4...v1.8.0) (2026-11-18)
+
+### Features
+
+* доработано окно для заполнения курса таблеток: добавлены новые параметры для препаратов ([#14](https://github.com/mike-novum/onecal/issues/14)) ([de67bc9](https://github.com/mike-novum/onecal/commit/de67bc9c6e928026becae5287635bdb915329a2c))
+
 ## [1.7.4](https://github.com/mike-novum/onecal/compare/v1.7.3...v1.7.4) (2026-11-17)
 
 ### Bug Fixes
