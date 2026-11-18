@@ -1,3 +1,9 @@
+## [1.8.1](https://github.com/mike-novum/onecal/compare/v1.8.0...v1.8.1) (2026-11-18)
+
+### Bug Fixes
+
+* несколько приемов препаратов в день теперь отмечаются разными пунктами в todo (ранее можно было отметить одной галкой только сразу все приёмы) ([#15](https://github.com/mike-novum/onecal/issues/15)) ([1b3a8c0](https://github.com/mike-novum/onecal/commit/1b3a8c08171b6f787cdc337f254f6e3cb58dff5d))
+
 ## [1.8.0](https://github.com/mike-novum/onecal/compare/v1.7.4...v1.8.0) (2026-11-18)
 
 ### Features
