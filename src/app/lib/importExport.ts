@@ -1,4 +1,4 @@
-import type { AppSnapshot, Intake } from '@/shared/model';
+import { isDayPartList, isDoseUnit, isIntakeValue, type AppSnapshot } from '@/shared/model';
 
 export const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -14,13 +14,20 @@ function isDayLog(value: unknown): boolean {
   return Array.isArray(log.items) && log.items.every((i) => typeof i === 'string') && typeof log.wasBad === 'boolean';
 }
 
-function isIntake(value: unknown): value is Intake {
-  return value === 'before' || value === 'during' || value === 'after';
+function isOptionalString(value: unknown): boolean {
+  return value === undefined || typeof value === 'string';
+}
+
+function isMedicationSpan(start: unknown, end: unknown): boolean {
+  if (start === undefined && end === undefined) return true;
+  if (typeof start !== 'string' || typeof end !== 'string') return false;
+  return DATE_RE.test(start) && DATE_RE.test(end) && end >= start;
 }
 
 function isMedication(value: unknown): boolean {
   if (typeof value !== 'object' || value === null) return false;
   const med = value as Record<string, unknown>;
+  if (med.unit === 'custom' && (typeof med.customUnit !== 'string' || med.customUnit.trim() === '')) return false;
   return (
     typeof med.name === 'string' &&
     med.name.length > 0 &&
@@ -28,7 +35,24 @@ function isMedication(value: unknown): boolean {
     typeof med.timesPerDay === 'number' &&
     Number.isInteger(med.timesPerDay) &&
     med.timesPerDay >= 1 &&
-    isIntake(med.intake)
+    isIntakeValue(med.intake) &&
+    (med.unit === undefined || isDoseUnit(med.unit)) &&
+    isOptionalString(med.amount) &&
+    isOptionalString(med.customUnit) &&
+    (med.dayParts === undefined || isDayPartList(med.dayParts)) &&
+    isMedicationSpan(med.startDate, med.endDate)
+  );
+}
+
+function medicationFitsCourse(med: unknown, courseStart: string, courseEnd: string): boolean {
+  if (!isMedication(med) || typeof med !== 'object' || med === null) return false;
+  const item = med as Record<string, unknown>;
+  if (item.startDate === undefined && item.endDate === undefined) return true;
+  return (
+    typeof item.startDate === 'string' &&
+    typeof item.endDate === 'string' &&
+    item.startDate >= courseStart &&
+    item.endDate <= courseEnd
   );
 }
 
@@ -46,7 +70,7 @@ function isPillCourse(value: unknown): boolean {
     course.endDate >= course.startDate &&
     Array.isArray(course.medications) &&
     course.medications.length > 0 &&
-    course.medications.every(isMedication)
+    course.medications.every((med) => medicationFitsCourse(med, course.startDate as string, course.endDate as string))
   );
 }
 

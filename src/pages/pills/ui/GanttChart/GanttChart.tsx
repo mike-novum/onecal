@@ -1,5 +1,5 @@
 import { addDays, diffDays, MONTHS_RU, todayISO } from '@/shared/lib';
-import type { PillCourse } from '@/shared/model';
+import { hasCustomMedicationSpan, medicationInterval, type PillCourse } from '@/shared/model';
 
 interface GanttChartProps {
   courses: PillCourse[];
@@ -107,20 +107,44 @@ export function GanttChart({ courses }: GanttChartProps) {
         {courses.map((course) => {
           const offset = diffDays(min, course.startDate);
           const width = diffDays(course.startDate, course.endDate) + 1;
+          const customMeds = course.medications.filter((med) => hasCustomMedicationSpan(course, med));
           return (
-            <div key={course.id} className="grid py-1" style={{ gridTemplateColumns: template }}>
-              <div
-                title={`${course.title} (${course.startDate} — ${course.endDate})`}
-                className="truncate rounded-md px-1.5 text-xs font-medium text-white"
-                style={{
-                  gridColumnStart: offset + 1,
-                  gridColumnEnd: `span ${width}`,
-                  backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
-                  boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset',
-                }}
-              >
-                {course.title}
+            <div key={course.id} className="py-1">
+              <div className="grid" style={{ gridTemplateColumns: template }}>
+                <div
+                  title={`${course.title} (${course.startDate} — ${course.endDate})`}
+                  className="truncate rounded-md px-1.5 text-xs font-medium text-white"
+                  style={{
+                    gridColumnStart: offset + 1,
+                    gridColumnEnd: `span ${width}`,
+                    backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
+                    boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset',
+                  }}
+                >
+                  {course.title}
+                </div>
               </div>
+              {customMeds.map((med, index) => {
+                const interval = medicationInterval(course, med);
+                const medOffset = diffDays(min, interval.start);
+                const medWidth = diffDays(interval.start, interval.end) + 1;
+                return (
+                  <div key={`${med.name}-${index}`} className="mt-1 grid" style={{ gridTemplateColumns: template }}>
+                    <div
+                      title={`${course.title}: ${med.name} (${interval.start} — ${interval.end})`}
+                      className="truncate rounded-md px-1.5 text-[11px] text-[color:var(--text-primary)]"
+                      style={{
+                        gridColumnStart: medOffset + 1,
+                        gridColumnEnd: `span ${medWidth}`,
+                        background: 'var(--accent-soft)',
+                        boxShadow: 'inset 0 0 0 1px var(--accent)',
+                      }}
+                    >
+                      {med.name}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           );
         })}
