@@ -53,10 +53,12 @@ describe('TodayChecklist', () => {
     expect(screen.getByText('Витамин D')).toBeInTheDocument();
     expect(screen.getByText('2000 ME')).toBeInTheDocument();
     expect(screen.getByText('во время еды')).toBeInTheDocument();
-    expect(screen.getByText('Омега-3')).toBeInTheDocument();
-    expect(screen.getByText('1000 мг')).toBeInTheDocument();
-    expect(screen.getByText('после еды')).toBeInTheDocument();
-    expect(screen.getByText('0 из 2 принято')).toBeInTheDocument();
+    expect(screen.getAllByText('Омега-3')).toHaveLength(2);
+    expect(screen.getAllByText('1000 мг')).toHaveLength(2);
+    expect(screen.getAllByText('после еды')).toHaveLength(2);
+    expect(screen.getByText('1-й приём')).toBeInTheDocument();
+    expect(screen.getByText('2-й приём')).toBeInTheDocument();
+    expect(screen.getByText('0 из 3 принято')).toBeInTheDocument();
   });
 
   test('отметка чекбокса переключает статус и сохраняет в localStorage', () => {
@@ -71,7 +73,7 @@ describe('TodayChecklist', () => {
     fireEvent.click(itemBtn);
 
     expect(itemBtn).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByText('1 из 2 принято')).toBeInTheDocument();
+    expect(screen.getByText('1 из 3 принято')).toBeInTheDocument();
     expect(vibrate).toHaveBeenCalledWith(10);
 
     const stored = JSON.parse(localStorage.getItem(PILL_INTAKES_STORAGE_KEY) || '{}');
@@ -79,7 +81,7 @@ describe('TodayChecklist', () => {
 
     fireEvent.click(itemBtn);
     expect(itemBtn).toHaveAttribute('aria-checked', 'false');
-    expect(screen.getByText('0 из 2 принято')).toBeInTheDocument();
+    expect(screen.getByText('0 из 3 принято')).toBeInTheDocument();
 
     const storedAfter = JSON.parse(localStorage.getItem(PILL_INTAKES_STORAGE_KEY) || '{}');
     expect(storedAfter['2026-10-05']['c1:Витамин D:0']).toBe(false);
@@ -99,6 +101,6 @@ describe('TodayChecklist', () => {
 
     const itemBtn = screen.getByRole('checkbox', { name: /Витамин D/ });
     expect(itemBtn).toHaveAttribute('aria-checked', 'true');
-    expect(screen.getByText('1 из 2 принято')).toBeInTheDocument();
+    expect(screen.getByText('1 из 3 принято')).toBeInTheDocument();
   });
 });

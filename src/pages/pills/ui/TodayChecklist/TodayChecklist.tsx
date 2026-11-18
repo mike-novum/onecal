@@ -1,13 +1,17 @@
 import { memo } from 'react';
-import { DAY_PART_LABELS, mealLabel, timesPerDayLabel, type DayPart, type Medication, type PillCourse } from '@/shared/model';
+import { DAY_PART_LABELS, mealLabel, type DayPart, type Medication, type PillCourse } from '@/shared/model';
 import { todayISO } from '@/shared/lib';
 import { getActiveMedications, usePillIntakes } from '../../model/pillIntakes';
 
-function itemLabel(medication: Medication, dayPart?: DayPart): string {
+function whenLabel(dayPart?: DayPart, dose?: number): string {
+  if (dayPart) return DAY_PART_LABELS[dayPart];
+  if (dose) return `${dose}-й приём`;
+  return '';
+}
+
+function itemLabel(medication: Medication, dayPart?: DayPart, dose?: number): string {
   const meal = mealLabel(medication.intake);
-  return [medication.name, medication.dosage, dayPart ? DAY_PART_LABELS[dayPart] : '', meal ?? '']
-    .filter(Boolean)
-    .join(', ');
+  return [medication.name, medication.dosage, whenLabel(dayPart, dose), meal ?? ''].filter(Boolean).join(', ');
 }
 
 interface TodayChecklistProps {
@@ -64,16 +68,17 @@ export const TodayChecklist = memo(function TodayChecklist({
       </div>
 
       <div className="flex flex-col gap-2">
-        {activeItems.map(({ courseTitle, medication, intakeKey, dayPart }) => {
+        {activeItems.map(({ courseTitle, medication, intakeKey, dayPart, dose }) => {
           const taken = isTaken(intakeKey);
           const meal = mealLabel(medication.intake);
+          const when = whenLabel(dayPart, dose);
           return (
             <button
               key={intakeKey}
               type="button"
               role="checkbox"
               aria-checked={taken}
-              aria-label={itemLabel(medication, dayPart)}
+              aria-label={itemLabel(medication, dayPart, dose)}
               onClick={() => toggle(intakeKey)}
               className={[
                 'group flex items-center justify-between gap-3 rounded-xl border p-3 text-left transition select-none',
@@ -118,9 +123,9 @@ export const TodayChecklist = memo(function TodayChecklist({
                     )}
                   </div>
                   <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-[color:var(--text-secondary)]">
-                    {dayPart && (
+                    {when && (
                       <span className="rounded-md bg-[color:var(--bg-elevated-2)] px-1.5 py-0.5 text-[11px] text-[color:var(--text-secondary)]">
-                        {DAY_PART_LABELS[dayPart]}
+                        {when}
                       </span>
                     )}
                     {meal && (
@@ -128,14 +133,8 @@ export const TodayChecklist = memo(function TodayChecklist({
                         {meal}
                       </span>
                     )}
-                    {(dayPart || meal) && <span className="text-[color:var(--text-muted)]">·</span>}
+                    {(when || meal) && <span className="text-[color:var(--text-muted)]">·</span>}
                     <span className="text-[color:var(--text-muted)]">{courseTitle}</span>
-                    {!dayPart && medication.timesPerDay > 1 && (
-                      <>
-                        <span className="text-[color:var(--text-muted)]">·</span>
-                        <span className="text-[color:var(--text-muted)]">{timesPerDayLabel(medication.timesPerDay)}</span>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>

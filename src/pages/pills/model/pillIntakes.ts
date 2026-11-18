@@ -16,6 +16,7 @@ export interface ActiveMedicationItem {
   medication: Medication;
   intakeKey: string;
   dayPart?: DayPart;
+  dose?: number;
 }
 
 export function loadPillIntakes(): PillIntakesState {
@@ -72,22 +73,26 @@ export function getActiveMedications(
       const interval = medicationInterval(course, med);
       if (date < interval.start || date > interval.end) return;
       const parts = sortDayParts(med.dayParts ?? []);
-      if (parts.length === 0) {
-        items.push({
-          courseId: course.id,
-          courseTitle: course.title,
-          medication: med,
-          intakeKey: `${course.id}:${med.name}:${index}`,
-        });
+      if (parts.length > 0) {
+        for (const part of parts) {
+          items.push({
+            courseId: course.id,
+            courseTitle: course.title,
+            medication: med,
+            intakeKey: `${course.id}:${med.name}:${index}:${part}`,
+            dayPart: part,
+          });
+        }
         return;
       }
-      for (const part of parts) {
+      const times = med.timesPerDay >= 1 ? med.timesPerDay : 1;
+      for (let dose = 1; dose <= times; dose += 1) {
         items.push({
           courseId: course.id,
           courseTitle: course.title,
           medication: med,
-          intakeKey: `${course.id}:${med.name}:${index}:${part}`,
-          dayPart: part,
+          intakeKey: times === 1 ? `${course.id}:${med.name}:${index}` : `${course.id}:${med.name}:${index}:dose:${dose}`,
+          dose: times === 1 ? undefined : dose,
         });
       }
     });
