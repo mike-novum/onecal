@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Medication, PillCourse } from '@/shared/model';
+import { medicationInterval, sortDayParts, type DayPart, type Medication, type PillCourse } from '@/shared/model';
 import { todayISO, triggerHaptic } from '@/shared/lib';
 
 export const PILL_INTAKES_STORAGE_KEY = 'onecal-pill-intakes';
@@ -15,6 +15,7 @@ export interface ActiveMedicationItem {
   courseTitle: string;
   medication: Medication;
   intakeKey: string;
+  dayPart?: DayPart;
 }
 
 export function loadPillIntakes(): PillIntakesState {
@@ -64,19 +65,31 @@ export function getActiveMedications(
   courses: PillCourse[],
   date: string = todayISO(),
 ): ActiveMedicationItem[] {
-  const activeCourses = courses.filter(
-    (c) => date >= c.startDate && date <= c.endDate,
-  );
-
   const items: ActiveMedicationItem[] = [];
-  for (const course of activeCourses) {
+  for (const course of courses) {
+    if (date < course.startDate || date > course.endDate) continue;
     course.medications.forEach((med, index) => {
-      items.push({
-        courseId: course.id,
-        courseTitle: course.title,
-        medication: med,
-        intakeKey: `${course.id}:${med.name}:${index}`,
-      });
+      const interval = medicationInterval(course, med);
+      if (date < interval.start || date > interval.end) return;
+      const parts = sortDayParts(med.dayParts ?? []);
+      if (parts.length === 0) {
+        items.push({
+          courseId: course.id,
+          courseTitle: course.title,
+          medication: med,
+          intakeKey: `${course.id}:${med.name}:${index}`,
+        });
+        return;
+      }
+      for (const part of parts) {
+        items.push({
+          courseId: course.id,
+          courseTitle: course.title,
+          medication: med,
+          intakeKey: `${course.id}:${med.name}:${index}:${part}`,
+          dayPart: part,
+        });
+      }
     });
   }
 

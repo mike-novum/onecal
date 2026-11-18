@@ -1,13 +1,14 @@
 import { memo } from 'react';
-import type { PillCourse } from '@/shared/model';
+import { DAY_PART_LABELS, mealLabel, timesPerDayLabel, type DayPart, type Medication, type PillCourse } from '@/shared/model';
 import { todayISO } from '@/shared/lib';
 import { getActiveMedications, usePillIntakes } from '../../model/pillIntakes';
 
-const INTAKE_LABELS: Record<string, string> = {
-  before: 'до еды',
-  during: 'во время еды',
-  after: 'после еды',
-};
+function itemLabel(medication: Medication, dayPart?: DayPart): string {
+  const meal = mealLabel(medication.intake);
+  return [medication.name, medication.dosage, dayPart ? DAY_PART_LABELS[dayPart] : '', meal ?? '']
+    .filter(Boolean)
+    .join(', ');
+}
 
 interface TodayChecklistProps {
   courses: PillCourse[];
@@ -63,15 +64,16 @@ export const TodayChecklist = memo(function TodayChecklist({
       </div>
 
       <div className="flex flex-col gap-2">
-        {activeItems.map(({ courseTitle, medication, intakeKey }) => {
+        {activeItems.map(({ courseTitle, medication, intakeKey, dayPart }) => {
           const taken = isTaken(intakeKey);
+          const meal = mealLabel(medication.intake);
           return (
             <button
               key={intakeKey}
               type="button"
               role="checkbox"
               aria-checked={taken}
-              aria-label={`${medication.name}, ${medication.dosage}, ${INTAKE_LABELS[medication.intake] || medication.intake}`}
+              aria-label={itemLabel(medication, dayPart)}
               onClick={() => toggle(intakeKey)}
               className={[
                 'group flex items-center justify-between gap-3 rounded-xl border p-3 text-left transition select-none',
@@ -116,17 +118,22 @@ export const TodayChecklist = memo(function TodayChecklist({
                     )}
                   </div>
                   <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-[color:var(--text-secondary)]">
-                    <span className="rounded-md bg-[color:var(--bg-elevated-2)] px-1.5 py-0.5 text-[11px] text-[color:var(--text-secondary)]">
-                      {INTAKE_LABELS[medication.intake] || medication.intake}
-                    </span>
-                    <span className="text-[color:var(--text-muted)]">·</span>
+                    {dayPart && (
+                      <span className="rounded-md bg-[color:var(--bg-elevated-2)] px-1.5 py-0.5 text-[11px] text-[color:var(--text-secondary)]">
+                        {DAY_PART_LABELS[dayPart]}
+                      </span>
+                    )}
+                    {meal && (
+                      <span className="rounded-md bg-[color:var(--bg-elevated-2)] px-1.5 py-0.5 text-[11px] text-[color:var(--text-secondary)]">
+                        {meal}
+                      </span>
+                    )}
+                    {(dayPart || meal) && <span className="text-[color:var(--text-muted)]">·</span>}
                     <span className="text-[color:var(--text-muted)]">{courseTitle}</span>
-                    {medication.timesPerDay > 1 && (
+                    {!dayPart && medication.timesPerDay > 1 && (
                       <>
                         <span className="text-[color:var(--text-muted)]">·</span>
-                        <span className="text-[color:var(--text-muted)]">
-                          {medication.timesPerDay} раз(а) в день
-                        </span>
+                        <span className="text-[color:var(--text-muted)]">{timesPerDayLabel(medication.timesPerDay)}</span>
                       </>
                     )}
                   </div>

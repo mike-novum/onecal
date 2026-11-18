@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { Intake, Medication, PillCourse } from '@/shared/model';
+import { sortDayParts, type PillCourse } from '@/shared/model';
+import { MedicationFields } from './MedicationFields';
+import { draftFromMedication, emptyMedicationDraft, toMedication, type MedicationDraft } from './medicationDraft';
 
 interface CourseFormProps {
   initial: PillCourse | null;
@@ -7,24 +9,17 @@ interface CourseFormProps {
   onCancel: () => void;
 }
 
-const INTAKE_OPTIONS: { value: Intake; label: string }[] = [
-  { value: 'before', label: 'до еды' },
-  { value: 'during', label: 'во время еды' },
-  { value: 'after', label: 'после еды' },
-];
-
-const EMPTY_MED: Medication = { name: '', dosage: '', timesPerDay: 1, intake: 'after' };
-
 const inputClass =
   'w-full min-w-0 max-w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] px-3 py-1.5 text-sm text-[color:var(--text-primary)] outline-none transition focus:border-[color:var(--accent)] focus:bg-[color:var(--bg-elevated)]';
 const labelClass = 'flex flex-col gap-1.5 text-sm text-[color:var(--text-secondary)]';
-const subLabelClass = 'flex flex-col gap-1.5 text-xs text-[color:var(--text-muted)]';
 
 export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [startDate, setStartDate] = useState(initial?.startDate ?? '');
   const [endDate, setEndDate] = useState(initial?.endDate ?? '');
-  const [medications, setMedications] = useState<Medication[]>(initial?.medications ?? [{ ...EMPTY_MED }]);
+  const [medications, setMedications] = useState<MedicationDraft[]>(
+    initial?.medications.map(draftFromMedication) ?? [emptyMedicationDraft()],
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,8 +30,18 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onCancel]);
 
-  function updateMed(index: number, patch: Partial<Medication>) {
-    setMedications((prev) => prev.map((m, i) => (i === index ? { ...m, ...patch } : m)));
+  function updateMed(index: number, patch: Partial<MedicationDraft>) {
+    setMedications((prev) => prev.map((med, i) => (i === index ? { ...med, ...patch } : med)));
+  }
+
+  function changeCourseStart(value: string) {
+    setStartDate(value);
+    setMedications((prev) => prev.map((med) => (med.ownDates && med.startDate === '' ? { ...med, startDate: value } : med)));
+  }
+
+  function changeCourseEnd(value: string) {
+    setEndDate(value);
+    setMedications((prev) => prev.map((med) => (med.ownDates && med.endDate === '' ? { ...med, endDate: value } : med)));
   }
 
   function submit() {
@@ -56,12 +61,36 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
       setError('Добавьте хотя бы один препарат');
       return;
     }
-    if (medications.some((m) => m.name.trim() === '')) {
+    if (medications.some((med) => med.name.trim() === '')) {
       setError('Название препарата обязательно');
       return;
     }
-    if (medications.some((m) => !Number.isInteger(m.timesPerDay) || m.timesPerDay < 1)) {
-      setError('Кратность приёма должна быть целым числом не меньше 1');
+    if (
+      medications.some((med) => {
+        if (med.scheduleMode === 'parts') return sortDayParts(med.dayParts).length < 1;
+        if (!/^\d+$/.test(med.timesText)) return true;
+        const times = Number(med.timesText);
+        return !Number.isInteger(times) || times < 1;
+      })
+    ) {
+      const missingPart = medications.some((med) => med.scheduleMode === 'parts' && sortDayParts(med.dayParts).length < 1);
+      setError(missingPart ? 'Выберите время суток' : 'Кратность приёма должна быть целым числом не меньше 1');
+      return;
+    }
+    if (medications.some((med) => med.unit === 'custom' && med.customUnit.trim() === '')) {
+      setError('Укажите свою единицу');
+      return;
+    }
+    if (medications.some((med) => med.ownDates && (med.startDate === '' || med.endDate === ''))) {
+      setError('Укажите срок препарата');
+      return;
+    }
+    if (medications.some((med) => med.ownDates && med.endDate < med.startDate)) {
+      setError('Дата окончания препарата раньше даты начала');
+      return;
+    }
+    if (medications.some((med) => med.ownDates && (med.startDate < startDate || med.endDate > endDate))) {
+      setError('Срок препарата должен быть внутри дат курса');
       return;
     }
     setError(null);
@@ -70,7 +99,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
       title: title.trim(),
       startDate,
       endDate,
-      medications: medications.map((m) => ({ ...m, name: m.name.trim() })),
+      medications: medications.map(toMedication),
     });
   }
 
@@ -84,7 +113,7 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
       <div
         role="dialog"
         aria-label={initial ? 'Редактировать курс' : 'Новый курс'}
-        className="max-h-[92vh] w-full min-w-0 max-w-lg overflow-x-hidden overflow-y-auto rounded-t-3xl border border-[color:var(--border)] p-5 sm:rounded-2xl"
+        className="max-h-[92vh] w-full min-w-0 max-w-xl overflow-x-hidden overflow-y-auto rounded-t-3xl border border-[color:var(--border)] p-5 sm:rounded-2xl"
         style={{ background: 'var(--bg-elevated)', boxShadow: 'var(--shadow-lg), var(--shadow-inset)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -94,31 +123,16 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
         <div className="mb-4 flex flex-col gap-3">
           <label className={labelClass}>
             Название курса
-            <input
-              autoFocus
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className={inputClass}
-            />
+            <input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
           </label>
           <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
             <label className={`${labelClass} w-full min-w-0`}>
               Начало
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className={inputClass}
-              />
+              <input type="date" value={startDate} onChange={(e) => changeCourseStart(e.target.value)} className={inputClass} />
             </label>
             <label className={`${labelClass} w-full min-w-0`}>
               Окончание
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className={inputClass}
-              />
+              <input type="date" value={endDate} onChange={(e) => changeCourseEnd(e.target.value)} className={inputClass} />
             </label>
           </div>
         </div>
@@ -126,70 +140,19 @@ export function CourseForm({ initial, onSubmit, onCancel }: CourseFormProps) {
         <div className="mb-4">
           <div className="mb-2 text-sm font-medium text-[color:var(--text-secondary)]">Препараты</div>
           {medications.map((med, i) => (
-            <div
-              key={i}
-              className="mb-2 min-w-0 rounded-xl border border-[color:var(--border)] bg-[color:var(--bg-elevated-2)] p-3"
-            >
-              <div className="flex flex-col gap-2">
-                <div className="grid grid-cols-2 gap-2">
-                  <label className={`${subLabelClass} min-w-0`}>
-                    Название препарата
-                    <input
-                      value={med.name}
-                      onChange={(e) => updateMed(i, { name: e.target.value })}
-                      className={inputClass}
-                    />
-                  </label>
-                  <label className={`${subLabelClass} min-w-0`}>
-                    Дозировка
-                    <input
-                      value={med.dosage}
-                      onChange={(e) => updateMed(i, { dosage: e.target.value })}
-                      className={inputClass}
-                    />
-                  </label>
-                </div>
-                <div className="grid min-w-0 grid-cols-[6rem_minmax(0,1fr)] items-end gap-2 sm:grid-cols-[6rem_minmax(0,1fr)_auto]">
-                  <label className={`${subLabelClass} min-w-0`}>
-                    Раз в день
-                    <input
-                      type="number"
-                      min={1}
-                      value={med.timesPerDay}
-                      onChange={(e) => updateMed(i, { timesPerDay: Number(e.target.value) })}
-                      className={inputClass}
-                    />
-                  </label>
-                  <label className={`${subLabelClass} min-w-0 overflow-hidden`}>
-                    Приём
-                    <span className="grid min-w-0 grid-cols-1 overflow-hidden">
-                      <select
-                        value={med.intake}
-                        onChange={(e) => updateMed(i, { intake: e.target.value as Intake })}
-                        className={`${inputClass} col-start-1 row-start-1`}
-                      >
-                        {INTAKE_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setMedications((prev) => prev.filter((_, j) => j !== i))}
-                    className="col-span-2 justify-self-end rounded-lg border border-[color:var(--border)] px-2.5 py-1.5 text-xs text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:text-[color:var(--text-primary)] sm:col-span-1"
-                  >
-                    Удалить
-                  </button>
-                </div>
-              </div>
-            </div>
+            <MedicationFields
+              key={med.key}
+              index={i}
+              draft={med}
+              courseStart={startDate}
+              courseEnd={endDate}
+              onChange={(patch) => updateMed(i, patch)}
+              onRemove={() => setMedications((prev) => prev.filter((_, j) => j !== i))}
+            />
           ))}
           <button
             type="button"
-            onClick={() => setMedications((prev) => [...prev, { ...EMPTY_MED }])}
+            onClick={() => setMedications((prev) => [...prev, emptyMedicationDraft()])}
             className="rounded-lg border border-dashed border-[color:var(--border)] px-3 py-1.5 text-xs text-[color:var(--text-secondary)] transition hover:border-[color:var(--border-strong)] hover:text-[color:var(--text-primary)]"
           >
             + Добавить препарат

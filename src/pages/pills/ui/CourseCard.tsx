@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { formatDayTitle } from '@/shared/lib';
-import type { PillCourse } from '@/shared/model';
-
-const INTAKE_LABELS: Record<string, string> = {
-  before: 'до еды',
-  during: 'во время еды',
-  after: 'после еды',
-};
+import { describeSchedule, hasCustomMedicationSpan, mealLabel, type PillCourse } from '@/shared/model';
 
 interface CourseCardProps {
   course: PillCourse;
@@ -69,15 +63,24 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
         </div>
       </div>
       <ul className="mt-2 space-y-1 text-sm text-[color:var(--text-secondary)]">
-        {course.medications.map((med, i) => (
-          <li key={i} className="flex flex-wrap items-baseline gap-x-2">
-            <span className="text-[color:var(--text-primary)]">{med.name}</span>
-            {med.dosage && <span className="text-[color:var(--text-muted)]">· {med.dosage}</span>}
-            <span className="text-[color:var(--text-muted)]">
-              · {med.timesPerDay} раз(а) в день · {INTAKE_LABELS[med.intake]}
-            </span>
-          </li>
-        ))}
+        {course.medications.map((med, i) => {
+          const meal = mealLabel(med.intake);
+          return (
+            <li key={i} className="flex flex-wrap items-baseline gap-x-2">
+              <span className="text-[color:var(--text-primary)]">{med.name}</span>
+              {med.dosage && <span className="text-[color:var(--text-muted)]">· {med.dosage}</span>}
+              <span className="text-[color:var(--text-muted)]">
+                · {describeSchedule(med)}
+                {meal ? ` · ${meal}` : ''}
+              </span>
+              {hasCustomMedicationSpan(course, med) && med.startDate && med.endDate && (
+                <span className="text-[color:var(--text-muted)]">
+                  · {formatDayTitle(med.startDate)} — {formatDayTitle(med.endDate)}
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
