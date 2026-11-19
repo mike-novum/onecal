@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { addDays, diffDays, MONTHS_RU, todayISO } from '@/shared/lib';
 import { hasCustomMedicationSpan, medicationInterval, type PillCourse } from '@/shared/model';
 
@@ -10,6 +11,46 @@ interface MonthSpan {
   label: string;
   startCol: number;
   span: number;
+}
+
+interface GanttBarProps {
+  label: string;
+  tooltip: string;
+  startCol: number;
+  span: number;
+  style: CSSProperties;
+  labelColor: string;
+  labelSize: string;
+  labelWeight: number;
+}
+
+function GanttBar({
+  label,
+  tooltip,
+  startCol,
+  span,
+  style,
+  labelColor,
+  labelSize,
+  labelWeight,
+}: GanttBarProps) {
+  return (
+    <div
+      data-label={label}
+      title={tooltip}
+      className="gantt-bar rounded-md"
+      style={{
+        gridColumnStart: startCol,
+        gridColumnEnd: `span ${span}`,
+        ...style,
+        '--gantt-label-color': labelColor,
+        '--gantt-label-size': labelSize,
+        '--gantt-label-weight': labelWeight,
+      } as CSSProperties}
+    >
+      {label}
+    </div>
+  );
 }
 
 export function GanttChart({ courses }: GanttChartProps) {
@@ -54,19 +95,19 @@ export function GanttChart({ courses }: GanttChartProps) {
   const todayIndex = days.indexOf(today);
 
   return (
-    <div className="surface overflow-x-auto rounded-2xl p-4">
+    <div className="surface @container overflow-x-auto rounded-2xl p-4">
       <div className="relative" aria-label={`Шкала с ${min} по ${max}`} style={{ minWidth: totalDays * 28 }}>
         <div className="mb-1 grid border-b border-[color:var(--border)] pb-1" style={{ gridTemplateColumns: template }}>
           {monthSpans.map((span) => (
             <div
               key={span.key}
-              className="truncate px-1 text-xs font-semibold text-[color:var(--text-secondary)]"
+              className="px-1 text-xs font-semibold text-[color:var(--text-secondary)]"
               style={{
                 gridColumnStart: span.startCol,
                 gridColumnEnd: `span ${span.span}`,
               }}
             >
-              {span.label}
+              <span className="sticky left-4 inline-block max-w-full truncate">{span.label}</span>
             </div>
           ))}
         </div>
@@ -111,18 +152,19 @@ export function GanttChart({ courses }: GanttChartProps) {
           return (
             <div key={course.id} className="py-1">
               <div className="grid" style={{ gridTemplateColumns: template }}>
-                <div
-                  title={`${course.title} (${course.startDate} — ${course.endDate})`}
-                  className="truncate rounded-md px-1.5 text-xs font-medium text-white"
+                <GanttBar
+                  label={course.title}
+                  tooltip={`${course.title} (${course.startDate} — ${course.endDate})`}
+                  startCol={offset + 1}
+                  span={width}
                   style={{
-                    gridColumnStart: offset + 1,
-                    gridColumnEnd: `span ${width}`,
                     backgroundImage: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
                     boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset',
                   }}
-                >
-                  {course.title}
-                </div>
+                  labelColor="#fff"
+                  labelSize="0.75rem"
+                  labelWeight={500}
+                />
               </div>
               {customMeds.map((med, index) => {
                 const interval = medicationInterval(course, med);
@@ -130,18 +172,19 @@ export function GanttChart({ courses }: GanttChartProps) {
                 const medWidth = diffDays(interval.start, interval.end) + 1;
                 return (
                   <div key={`${med.name}-${index}`} className="mt-1 grid" style={{ gridTemplateColumns: template }}>
-                    <div
-                      title={`${course.title}: ${med.name} (${interval.start} — ${interval.end})`}
-                      className="truncate rounded-md px-1.5 text-[11px] text-[color:var(--text-primary)]"
+                    <GanttBar
+                      label={med.name}
+                      tooltip={`${course.title}: ${med.name} (${interval.start} — ${interval.end})`}
+                      startCol={medOffset + 1}
+                      span={medWidth}
                       style={{
-                        gridColumnStart: medOffset + 1,
-                        gridColumnEnd: `span ${medWidth}`,
                         background: 'var(--accent-soft)',
                         boxShadow: 'inset 0 0 0 1px var(--accent)',
                       }}
-                    >
-                      {med.name}
-                    </div>
+                      labelColor="var(--text-primary)"
+                      labelSize="11px"
+                      labelWeight={400}
+                    />
                   </div>
                 );
               })}
