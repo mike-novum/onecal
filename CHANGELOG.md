@@ -1,3 +1,9 @@
+## [1.9.1](https://github.com/mike-novum/onecal/compare/v1.9.0...v1.9.1) (2026-11-19)
+
+### Bug Fixes
+
+* на диаграмме Ганта теперь препараты отображаются у всех курсов ([#17](https://github.com/mike-novum/onecal/issues/17)) ([dea4a46](https://github.com/mike-novum/onecal/commit/dea4a46a72b179904b96e7860e49df7ebc3af13f))
+
 ## [1.9.0](https://github.com/mike-novum/onecal/compare/v1.8.1...v1.9.0) (2026-11-19)
 
 ### Features
