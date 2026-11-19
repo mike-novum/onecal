@@ -1,3 +1,9 @@
+## [1.9.0](https://github.com/mike-novum/onecal/compare/v1.8.1...v1.9.0) (2026-11-19)
+
+### Features
+
+* названия курсов в ганте остаются у левого края при прокрутке ([#16](https://github.com/mike-novum/onecal/issues/16)) ([0dea31d](https://github.com/mike-novum/onecal/commit/0dea31d11dd2526d9e1e6fed2fdf3a41070cb30e))
+
 ## [1.8.1](https://github.com/mike-novum/onecal/compare/v1.8.0...v1.8.1) (2026-11-18)
 
 ### Bug Fixes
