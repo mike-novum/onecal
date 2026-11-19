@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { addDays, diffDays, MONTHS_RU, todayISO } from '@/shared/lib';
-import { hasCustomMedicationSpan, medicationInterval, type PillCourse } from '@/shared/model';
+import { medicationInterval, type PillCourse } from '@/shared/model';
 
 interface GanttChartProps {
   courses: PillCourse[];
@@ -148,7 +148,6 @@ export function GanttChart({ courses }: GanttChartProps) {
         {courses.map((course) => {
           const offset = diffDays(min, course.startDate);
           const width = diffDays(course.startDate, course.endDate) + 1;
-          const customMeds = course.medications.filter((med) => hasCustomMedicationSpan(course, med));
           return (
             <div key={course.id} className="py-1">
               <div className="grid" style={{ gridTemplateColumns: template }}>
@@ -166,7 +165,7 @@ export function GanttChart({ courses }: GanttChartProps) {
                   labelWeight={500}
                 />
               </div>
-              {customMeds.map((med, index) => {
+              {course.medications.map((med, index) => {
                 const interval = medicationInterval(course, med);
                 const medOffset = diffDays(min, interval.start);
                 const medWidth = diffDays(interval.start, interval.end) + 1;
