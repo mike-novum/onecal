@@ -207,3 +207,27 @@ button:disabled:active {
   -webkit-background-clip: text;
   color: transparent;
 }
+
+.gantt-bar {
+  overflow: clip;
+  font-size: 0;
+  line-height: 1rem;
+}
+
+.gantt-bar::before {
+  content: attr(data-label) / "";
+  position: sticky;
+  left: 1rem;
+  z-index: 20;
+  display: inline-block;
+  max-width: min(100%, 100cqi);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+  padding-inline: 0.375rem;
+  font-size: var(--gantt-label-size, 0.75rem);
+  line-height: 1rem;
+  font-weight: var(--gantt-label-weight, 500);
+  color: var(--gantt-label-color, #fff);
+}
